@@ -35,8 +35,7 @@ class AdminBaseController extends BaseController {
         //直接引入头部和底部文件，在新建页面模版的时候省去重复引入的环节
         $contrroller = strtolower(CONTROLLER_NAME);
         $action = strtolower(ACTION_NAME);
-       // return $this->fetch('public:head') . $this->fetch($contrroller . ':' . $action) . $this->fetch('public:foot');
-       return $this->fetch($contrroller . ':' . $action);
+        return $this->fetch($contrroller . ':' . $action);
     }
 
     //空方法
