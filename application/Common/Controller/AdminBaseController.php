@@ -4,6 +4,7 @@ namespace app\Common\Controller;
 
 use app\Common\Model\AdminUserModel;
 use app\Common\Model\CommonModel;
+use think\Exception;
 use think\Validate;
 
 class AdminBaseController extends BaseController {
@@ -58,7 +59,16 @@ class AdminBaseController extends BaseController {
         }
 
         $model = new AdminUserModel();
-        $model->get_admin_info($data['user_name']);
+        $res = $model->get_admin_info($data['user_name']);
+        if(empty($res)){
+
+            $this->error('找不到账号');
+        }
+        if($res[0]['password'] == $data['password']){
+            $this->success('登录成功',url('index/index'));
+        }else{
+            $this->error('密码错误');
+        }
     }
 
 }
