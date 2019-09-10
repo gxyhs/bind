@@ -7,7 +7,6 @@ class Login extends AdminBaseController
 {
     public function index()
     {   
-        
-        return $this->adminTpl();
+        return $this->fetch('login:index');
     }
 }
