@@ -2,6 +2,10 @@
 
 namespace app\Common\Controller;
 
+use app\Common\Model\AdminUserModel;
+use app\Common\Model\CommonModel;
+use think\Validate;
+
 class AdminBaseController extends BaseController {
 
     public function __construct($checkLogin = True) {
@@ -42,6 +46,20 @@ class AdminBaseController extends BaseController {
     //空方法
     public function _empty() {
         return $this->jump404();
+    }
+
+    public function adminLogin($data){
+        $validate = new Validate([
+            'user_name' => 'require',
+            'password' => 'require',
+        ]);
+
+        if(!$validate->check($data)){
+            var_dump($this->error($validate->getError()));
+        }
+
+        $model = new AdminUserModel();
+        $model->get_admin_info($data['user_name']);
     }
 
 }

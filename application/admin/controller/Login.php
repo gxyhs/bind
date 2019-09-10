@@ -9,4 +9,9 @@ class Login extends AdminBaseController
     {   
         return $this->fetch('login:index');
     }
+
+    public function login()
+    {
+        return $this->adminLogin(array_filter($_POST));
+    }
 }
