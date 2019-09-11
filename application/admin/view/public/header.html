@@ -10,18 +10,19 @@
 
     <title>index</title>
 
-    <!--easy pie chart-->
-    <link href="/static/js/jquery-easy-pie-chart/jquery.easy-pie-chart.css" rel="stylesheet" type="text/css" media="screen"/>
-
+    
     <!--right slidebar-->
     <link href="/static/css/slidebars.css" rel="stylesheet">
-
     <!--switchery-->
     <link href="/static/js/switchery/switchery.min.css" rel="stylesheet" type="text/css" media="screen" />
-
-    <!--toastr-->
-    <link href="/static/js/toastr-master/toastr.css" rel="stylesheet" type="text/css" />
-
+    
+     <!--Data Table-->
+     <link href="/static/js/data-table/css/jquery.dataTables.css" rel="stylesheet">
+     <link href="/static/js/data-table/css/dataTables.tableTools.css" rel="stylesheet">
+     <link href="/static/js/data-table/css/dataTables.colVis.min.css" rel="stylesheet">
+     <link href="/static/js/data-table/css/dataTables.responsive.css" rel="stylesheet">
+     <link href="/static/js/data-table/css/dataTables.scroller.css" rel="stylesheet">
+     <!-- Base Styles -->
     <!--common style-->
     <link href="/static/css/style.css" rel="stylesheet">
     <link href="/static/css/style-responsive.css" rel="stylesheet">
@@ -56,9 +57,10 @@
                 <!--sidebar nav start-->
                 <ul class="nav nav-pills nav-stacked side-navigation">
                     <li>
-                        <h3 class="navigation-title">Navigation</h3>
+                        <h3 class="navigation-title">{:lang('navigation')}</h3>
                     </li>
-                    <li><a href="index.html"><i class="fa fa-home"></i> <span>Dashboard</span></a></li>
+                    <li><a href="{:url('admin/Index/index')}"><i class="fa fa-home"></i> <span> {:lang('pretest')}</span></a></li>
+                    <li><a href="{:url('admin/Upload/list')}"><i class="fa fa-tasks"></i> <span> {:lang('upload_call_case')}</span></a></li>
                     <li class="menu-list">
                         <a href=""><i class="fa fa-laptop"></i>  <span>Layouts</span></a>
                         <ul class="child-list">
@@ -81,73 +83,6 @@
                             <li><a href="line-icon.html"> Line Icon</a></li>
                         </ul>
                     </li>
-                    <li>
-                        <h3 class="navigation-title">Components</h3>
-                    </li>
-                    <li class="menu-list"><a href=""><i class="fa fa-cogs"></i> <span>Components <span class="badge noti-arrow bg-success pull-right">3</span> </span></a>
-                        <ul class="child-list">
-                            <li><a href="grid.html"> Grids</a></li>
-                            <li><a href="calendar.html"> Calendar</a></li>
-                            <li><a href="timeline.html"> Timeline </a></li>
-                        </ul>
-                    </li>
-
-                    <li class="menu-list"><a href="javascript:;"><i class="fa fa-th-list"></i> <span>Data Tables</span></a>
-                        <ul class="child-list">
-                            <li><a href="table-static.html"> Basic Table</a></li>
-                            <li><a href="table-dynamic.html"> Advanced Table</a></li>
-                        </ul>
-                    </li>
-
-                    <li class="menu-list"><a href=""><i class="fa fa-tasks"></i> <span>Forms</span></a>
-                        <ul class="child-list">
-                            <li><a href="form-layout.html"> Form Layouts</a></li>
-                            <li><a href="advanced-components.html"> Advanced Components</a></li>
-                            <li><a href="form-wizard.html"> Form Wizards</a></li>
-                            <li><a href="form-validation.html"> Form Validation</a></li>
-                            <li><a href="form-editor.html"> Editors</a></li>
-                        </ul>
-                    </li>
-
-                    <li class="menu-list"><a href=""><i class="fa fa-bar-chart-o"></i> <span>Charts </span></a>
-                        <ul class="child-list">
-                            <li><a href="flot-chart.html"> Flot Charts</a></li>
-                            <li><a href="morris-chart.html"> Morris Charts</a></li>
-                            <li><a href="chartjs.html"> Chartjs</a></li>
-                        </ul>
-                    </li>
-                    <li>
-                        <h3 class="navigation-title">Extra</h3>
-                    </li>
-
-                    <li class="menu-list"><a href="javascript:;"><i class="fa fa-envelope-o"></i> <span>Email <span class="label noti-arrow bg-danger pull-right">4 Unread</span> </span></a>
-                        <ul class="child-list">
-                            <li><a href="inbox.html"> Inbox</a></li>
-                            <li><a href="inbox-details.html"> View Mail</a></li>
-                            <li><a href="inbox-compose.html"> Compose Mail</a></li>
-                        </ul>
-                    </li>
-
-                    <li class="menu-list"><a href="javascript:;"><i class="fa fa-map-marker"></i> <span>Maps</span></a>
-                        <ul class="child-list">
-                            <li><a href="google-map.html"> Google Map</a></li>
-                            <li><a href="vector-map.html"> Vector Map</a></li>
-                        </ul>
-                    </li>
-
-                    <li class="menu-list"><a href=""><i class="fa fa-file-text"></i> <span>Extra Pages</span></a>
-                        <ul class="child-list">
-                            <li><a href="profile.html"> Profile</a></li>
-                            <li><a href="invoice.html"> Invoice</a></li>
-                            <li><a href="login.html"> Login </a></li>
-                            <li><a href="registration.html"> Registration </a></li>
-                            <li><a href="lock.html"> Lock Screen </a></li>
-                            <li><a href="404.html"> 404 Error</a></li>
-                            <li><a href="500.html"> 500 Error</a></li>
-
-                        </ul>
-                    </li>
-
                 </ul>
                 <!--sidebar nav end-->
 
