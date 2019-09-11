@@ -39,7 +39,11 @@ return [
     // 默认时区
     'default_timezone'       => 'Asia/Shanghai',
     // 是否开启多语言
-    'lang_switch_on'         => false,
+    'lang_switch_on'         => true,
+    //语言
+    'lang_list'              => ['zh-cn','EN','INDO'],
+     // 默认语言切换变量
+    'VAR_LANGUAGE'          => 'lang', 
     // 默认全局过滤方法 用逗号分隔多个
     'default_filter'         => '',
     // 默认语言

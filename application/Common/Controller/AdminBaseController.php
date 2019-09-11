@@ -1,7 +1,8 @@
 <?php
 
 namespace app\Common\Controller;
-
+use think\facade\Cookie;
+use think\Lang; 
 class AdminBaseController extends BaseController {
 
     public function __construct($checkLogin = True) {
@@ -15,6 +16,15 @@ class AdminBaseController extends BaseController {
         $this->assign('controller', $controller);
         $this->assign('action', $action);
         $this->assign('tempname', $tempname);
+        
+        // $lang = lang('title');
+        // print_r($lang);die;
+        //语言切换
+        if(!(Cookie::has('think_var'))){
+            $this->lang();
+        }
+        $lang = empty(Cookie('think_var')) ? 'ZH-CH' : Cookie('think_var');
+        $this->assign('think_lang',$lang);
     }
 
     protected function isLogin() {
@@ -30,17 +40,8 @@ class AdminBaseController extends BaseController {
         //只有在app_debug=False时才会正常显示404页面，否则会有相应的错误警告提示
         abort(404, '页面异常');
     }
-
-    public function adminTpl() {
-        //直接引入头部和底部文件，在新建页面模版的时候省去重复引入的环节
-        $contrroller = strtolower(CONTROLLER_NAME);
-        $action = strtolower(ACTION_NAME);
-        return $this->fetch($contrroller . ':' . $action);
-    }
-
     //空方法
     public function _empty() {
         return $this->jump404();
     }
-
 }
