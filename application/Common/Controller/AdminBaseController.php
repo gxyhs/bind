@@ -3,6 +3,10 @@
 namespace app\Common\Controller;
 use think\facade\Cookie;
 use think\Lang; 
+use app\Common\Model\AdminUserModel;
+use app\Common\Model\CommonModel;
+use think\Exception;
+use think\Validate;
 class AdminBaseController extends BaseController {
 
     public function __construct($checkLogin = True) {
@@ -44,4 +48,28 @@ class AdminBaseController extends BaseController {
     public function _empty() {
         return $this->jump404();
     }
+    
+    public function adminLogin($data){
+        $validate = new Validate([
+            'user_name' => 'require',
+            'password' => 'require',
+        ]);
+
+        if(!$validate->check($data)){
+            var_dump($this->error($validate->getError()));
+        }
+
+        $model = new AdminUserModel();
+        $res = $model->get_admin_info($data['user_name']);
+        if(empty($res)){
+
+            $this->error('找不到账号');
+        }
+        if($res[0]['password'] == $data['password']){
+            $this->success('登录成功',url('index/index'));
+        }else{
+            $this->error('密码错误');
+        }
+    }
+
 }
