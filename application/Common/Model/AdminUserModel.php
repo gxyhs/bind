@@ -16,5 +16,10 @@ class AdminUserModel extends CommonModel {
         return $res;
     }
 
+    public function add_user($data)
+    {
+        $res = Db::name('admin_user')->insert($data);
+        return $res;
+    }
 }
 

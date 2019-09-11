@@ -1,12 +1,12 @@
 <?php
 namespace app\admin\controller;
-use app\Common\Controller\AdminBaseController;
+use app\Common\Controller\BaseController;
 use think\Db;
 /**
  * 登录
  * @author yhs 2019.09.10
  */
-class Login extends AdminBaseController
+class Login extends BaseController
 {   
     public function index()
     {   
