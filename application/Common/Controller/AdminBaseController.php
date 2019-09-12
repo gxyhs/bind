@@ -11,9 +11,6 @@ class AdminBaseController extends BaseController {
     public function __construct($checkLogin = True) {
         parent::__construct();
         $this->isLogin();
-        // if ($checkLogin) {
-        //     $this->isLogin();
-        // }
         $controller = strtolower(CONTROLLER_NAME);
         $action = strtolower(ACTION_NAME);
         $tempname = '/' . $controller . '/' . $action;
@@ -22,7 +19,6 @@ class AdminBaseController extends BaseController {
         $this->assign('tempname', $tempname);
         
         // $lang = lang('title');
-        // print_r($lang);die;
         //语言切换
         if(!(Cookie::has('think_var'))){
             $this->lang();

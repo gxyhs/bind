@@ -10,15 +10,15 @@ class AdminUserModel extends CommonModel {
         parent::__construct($data);
     }
 
-    public function get_admin_info($data)
-    {
-        $res = Db::name('admin_user')->where('user_name',$data)->limit('1')->select();
+    public function get_admin_info($condition)
+    {//print_r();die;
+        $res = Db::table($this->table)->where($condition)->find();
         return $res;
     }
 
     public function add_user($data)
     {
-        $res = Db::name('admin_user')->insert($data);
+        $res = Db::table($this->table)->insert($data);
         return $res;
     }
 }
