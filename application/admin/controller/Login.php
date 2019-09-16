@@ -2,6 +2,7 @@
 namespace app\admin\controller;
 use think\Controller;
 use think\Validate;
+use think\captcha\Captcha;
 use app\Common\Model\AdminUserModel;
 
 /**
@@ -28,7 +29,10 @@ class Login extends Controller
         if(!$validate->check($data)){
             var_dump($this->error($validate->getError()));
         }
-
+        $captcha = new Captcha();
+        if( !$captcha->check($data['captcha'])){
+            $this->error('验证码有误！');
+        }
         $model = new AdminUserModel();
         $condition = ['user_name'=>$data['user_name']];
         $res = $model->get_admin_info($condition);
@@ -43,6 +47,10 @@ class Login extends Controller
         }else{
             $this->error('密码错误');
         }
+    }
+    function verify(){
+        $captcha = new Captcha();
+        return $captcha->entry();
     }
     public function logout() {
         session(NULL);

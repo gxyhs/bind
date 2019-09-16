@@ -21,16 +21,129 @@ function format(d) {
 }
 
 
-// Data Table
+function init_DataTables() {
 
-$('.convert-data-table').DataTable({
-    "PaginationType": "bootstrap",
-    dom: '<"tbl-head clearfix"T>,<"tbl-top clearfix"lfr>,t,<"tbl-footer clearfix"<"tbl-info pull-left"i><"tbl-pagin pull-right"p>>',
-    tableTools: {
-        "sSwfPath": "swf/copy_csv_xls_pdf.swf"
+    console.log('run_datatables');
+
+    if( typeof ($.fn.DataTable) === 'undefined'){ return; }
+    console.log('init_DataTables');
+
+
+    $('#datatable').dataTable();
+    $('.datatable-noorder').dataTable({
+            ordering:false
+        }
+    );
+    $('.datatable_mul').dataTable();
+    $('.datatable_mul_page').dataTable({
+        "aLengthMenu" :[50,25,100]
+    });
+
+    $('#datatable-keytable').DataTable({
+        keys: true
+    });
+
+    function retrieveData(url, aoData, fnCallback) {
+        $.ajax({
+            url: url,//这个就是请求地址对应sAjaxSource
+            data : {
+                "aoData":JSON.stringify(aoData)
+            },
+            type: 'POST',
+            dataType: 'json',
+            async: true,
+            success: function (result) {
+                $('.check-all').attr("checked", false);
+                fnCallback(result);//把返回的数据传给这个方法就可以了,datatable会自动绑定数据的
+            },
+            error:function(XMLHttpRequest, textStatus, errorThrown) {
+                alert("status:"+XMLHttpRequest.status+",readyState:"+XMLHttpRequest.readyState+",textStatus:"+textStatus);
+
+            }
+        });
     }
-});
 
+    var ajaxDataTableFunction = function (object) {
+        object.DataTable()
+    } 
+
+    var form_serialize = $('.form-search').serialize();
+    $('.datatable-ajax').DataTable({
+        "PaginationType": "bootstrap",
+        dom: '<"tbl-top clearfix"lfr>,t,<"tbl-footer clearfix"<"tbl-info pull-left"i><"tbl-pagin pull-right"p>>',
+        tableTools: {
+            "sSwfPath": "swf/copy_csv_xls_pdf.swf"
+        },
+        "sPaginationType": "full_numbers",
+        "aLengthMenu" :[20,50,75,100,500],
+        "iDisplayLength": 20,  ///默认显示20行
+        'language': {
+            'emptyTable': 'empty table',
+            'loadingRecords': 'loading...',
+            'processing': 'processing...',   //加载提示
+            'search': 'search:',   //是否开启搜索
+            'lengthMenu': 'page _MENU_ pear',
+            'zeroRecords': 'no data',
+            //"bPaginate":false,  //是否使用分页器
+
+            'paginate': {
+                'first':      'first',
+                'last':       'last',
+                'next':       'next',
+                'previous':   'previous'
+            },
+            'info': ' _PAGE_ page / total _PAGES_ page Article: _START_ - _END_ / _TOTAL_',
+            'infoEmpty': 'infoEmpty',
+            'infoFiltered': '(infoFiltered _MAX_ num)',
+            "oAria": {
+                "sSortAscending": ": sort",
+                "sSortDescending": ": desc"
+            }
+        },
+        //'order':[[0,'desc']],  //默认排序
+        "searching":false,
+        "bLengthChange": true, //关闭每页显示多少条的选择框
+        "bPaginite": true,
+        "renderer": "bootstrap", //渲染样式:Bootstrap和jquery-ui
+        "bInfo": true,
+        "bStateSave": true,// //保存状态到cookie ***** 很重要 ， 当搜索的时候页面一刷新会导致搜索的消失。使用这个属性就可避免了
+        "bSort": false,
+        "processing": false,
+        "bServerSide": true,
+		
+        "sAjaxSource": "?"+form_serialize,//这个是请求的地址
+        "fnServerData": retrieveData,// 获取数据的处理函数
+    });
+
+    $('#datatable-responsive').DataTable();
+
+    $('#datatable-scroller').DataTable({
+        ajax: "js/datatables/json/scroller-demo.json",
+        deferRender: true,
+        scrollY: 380,
+        scrollCollapse: true,
+        scroller: true
+    });
+
+    $('#datatable-fixed-header').DataTable({
+        fixedHeader: true
+    });
+
+    var $datatable = $('#datatable-checkbox');
+
+    $datatable.dataTable({
+        'order': [[ 1, 'asc' ]],
+        'columnDefs': [
+            { orderable: false, targets: [0] }
+        ]
+    });
+    $datatable.on('draw.7dt', function() {
+        $('checkbox input').iCheck({
+            checkboxClass: 'icheckbox_flat-green'
+        });
+    });
+
+};
 
 
 
@@ -101,3 +214,6 @@ $(function() {
         }
     });
 });
+$(document).ready(function() {
+    init_DataTables();
+})
