@@ -173,6 +173,6 @@ require $rootPath.'extend/PHPExcel/PHPExcel.php';
         return $data;
     } else {
         // 上传失败获取错误信息
-        $this->error($file->getError());
+        return false;
     }
 }
