@@ -32,6 +32,10 @@
               <div class="login-wrap">
                   <input type="text" class="form-control" placeholder="User ID" name="user_name" autofocus>
                   <input type="password" class="form-control" placeholder="Password" name="password">
+                  <div>
+                    <input class="captcha" type="text" class="form-control" placeholder="Verification Code" name="captcha">
+                    <img width="140px;" onclick="changeCode(this)" src="{:url('Login/verify')}" alt="captcha" />
+                  </div>
                   <button class="btn btn-lg btn-success btn-block" type="submit">LOGIN</button>
                   
                   <!-- <label class="checkbox-custom check-success">
@@ -47,29 +51,6 @@
                   </div>
 
               </div>
-
-              <!-- Modal -->
-              <div aria-hidden="true" aria-labelledby="myModalLabel" role="dialog" tabindex="-1" id="forgotPass" class="modal fade">
-                  <div class="modal-dialog">
-                      <div class="modal-content">
-                          <div class="modal-header">
-                              <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
-                              <h4 class="modal-title">Forgot Password ?</h4>
-                          </div>
-                          <div class="modal-body">
-                              <p>Enter your e-mail address below to reset your password.</p>
-                              <input type="text" name="email" placeholder="Email" autocomplete="off" class="form-control placeholder-no-fix">
-
-                          </div>
-                          <div class="modal-footer">
-                              <button data-dismiss="modal" class="btn btn-default" type="button">Cancel</button>
-                              <button class="btn btn-success" type="button">Submit</button>
-                          </div>
-                      </div>
-                  </div>
-              </div>
-              <!-- modal -->
-
           </form>
       </div>
 
@@ -82,3 +63,11 @@
 
   </body>
 </html>
+<script>
+    // 点击验证码刷新图片
+    function changeCode(obj)
+    {
+        var url = "{:url('login/verify',['random'=>"+Math.random+"])}";  //兼容低版本的浏览器
+        obj.src = url;
+    }
+</script>
