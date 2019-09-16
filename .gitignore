@@ -2,6 +2,8 @@
 /.vscode
 /vendor
 *.log
+*.xlsx
+*.xls
 thinkphp
 .env
 .DS_Store
