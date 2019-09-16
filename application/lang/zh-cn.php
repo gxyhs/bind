@@ -12,6 +12,7 @@ return [
     'confirm_password' => '确认密码',
     'submit' => '提交',
     'cancel' => '取消',
+    'role_manage' => '角色管理',
 ];
 
 ?>

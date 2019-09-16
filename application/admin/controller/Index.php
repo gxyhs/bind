@@ -2,9 +2,11 @@
 namespace app\admin\controller;
 use app\Common\Controller\AdminBaseController;
 use think\Db;
+use think\Request;
+use think\File;
+use think\loader;
 use think\facade\Cookie;
-use app\Common\Model\AdminUserModel;
-class Index extends AdminBaseController
+use app\Common\Model\AdminUserModel;use think\facade\App;class Index extends AdminBaseController
 {   
     protected $adminUser;
     public function __construct() {
@@ -59,6 +61,32 @@ class Index extends AdminBaseController
             return json($back);
         }else{
             return json(['status'=>0]);
+        }
+    }
+
+    /**
+     * 测试导出
+     */
+    public function demo_out(){
+        $data = Db::table('tp_admin_user')->field('id,sex,email,user_name')->select();
+        $head = ['id','sex','emal','user_naem'];
+        $name = 'user';
+        return leading_out($data,$head,$name);
+        exit;
+    }
+
+    /**
+     * 测试导入
+     */
+    public function demo_in(){
+        if($_FILES){
+            $file = request()->file('excel');
+            $res = leading_in($file);
+            if(is_array($res)){
+                $this->success('成功',url('Index/index'));
+            }
+        }else{
+            return $this->fetch();
         }
     }
 }
