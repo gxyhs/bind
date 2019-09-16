@@ -12,8 +12,8 @@ class Upload extends AdminBaseController
             $length = $info['page_length'];
             $start = $info['page_start'];
             $list = $table->field('id,user_name,create_time')->limit($start,$length)->select();
-            $list = $this->object_array(json_decode($list));
-            $count = $table->count();//print_r($list);die;
+            $list = $this->object_array($list);
+            $count = $table->count();
             $data =  $this->show_paging_info($info['page_echo'],$count,$list);
             return $data;
         }

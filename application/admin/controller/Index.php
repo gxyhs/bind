@@ -6,7 +6,8 @@ use think\Request;
 use think\File;
 use think\loader;
 use think\facade\Cookie;
-use app\Common\Model\AdminUserModel;use think\facade\App;class Index extends AdminBaseController
+use app\Common\Model\AdminUserModel;
+use think\facade\App;class Index extends AdminBaseController
 {   
     protected $adminUser;
     public function __construct() {
@@ -65,7 +66,7 @@ use app\Common\Model\AdminUserModel;use think\facade\App;class Index extends Adm
     }
 
     /**
-     * ²âÊÔµ¼³ö
+     * 
      */
     public function demo_out(){
         $data = Db::table('tp_admin_user')->field('id,sex,email,user_name')->select();
@@ -76,14 +77,14 @@ use app\Common\Model\AdminUserModel;use think\facade\App;class Index extends Adm
     }
 
     /**
-     * ²âÊÔµ¼Èë
+     * ï¿½ï¿½ï¿½Ôµï¿½ï¿½ï¿½
      */
     public function demo_in(){
         if($_FILES){
             $file = request()->file('excel');
             $res = leading_in($file);
             if(is_array($res)){
-                $this->success('³É¹¦',url('Index/index'));
+                $this->success('success',url('Index/index'));
             }
         }else{
             return $this->fetch();
