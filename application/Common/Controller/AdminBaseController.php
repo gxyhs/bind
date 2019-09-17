@@ -68,7 +68,6 @@ class AdminBaseController extends BaseController {
         ];
     }
     public function show_paging_info($echo,$count,$ary){
-        $ary = json_decode($ary);
         $return_ary = [];
         foreach($ary as $val){
             $temp = array_values($val);
@@ -77,7 +76,8 @@ class AdminBaseController extends BaseController {
         $json_data = array ('sEcho'=>$echo,'iTotalRecords'=>$count,'iTotalDisplayRecords'=>$count,'aaData'=>$return_ary);
         return $json_data;
     }
-    public function object_array($array) {  
+    public function object_array($array) { 
+        $array = json_decode(json_encode($array),true);
         if(is_object($array)) {  
             $array = (array)$array;  
          } if(is_array($array)) {  
