@@ -67,7 +67,8 @@ class Index extends AdminBaseController
     }
 
     /**
-     * 
+     *
+     * 测试导出
      */
     public function demo_out(){
         $data = Db::table('tp_admin_user')->field('id,sex,email,user_name')->select();
@@ -78,14 +79,15 @@ class Index extends AdminBaseController
     }
 
     /**
-     * ���Ե���
+     * 测试导入
      */
     public function demo_in(){
         if($_FILES){
             $file = request()->file('excel');
             $res = leading_in($file);
             if(is_array($res)){
-                $this->success('success',url('Index/index'));
+
+                $this->success('导入成功',url('Index/index'));
             }
         }else{
             return $this->fetch();

@@ -51,7 +51,6 @@ require $rootPath.'extend/PHPExcel/PHPExcel.php';
             $objPHPExcel->setActiveSheetIndex(0)
                 ->setCellValue(chr($s).$num,$element);
         }
-
     }
     foreach($data as $k => $v){
         $A = $letter_begin;
