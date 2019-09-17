@@ -7,7 +7,12 @@ use think\File;
 use think\loader;
 use think\facade\Cookie;
 use app\Common\Model\AdminUserModel;
+<<<<<<< HEAD
 use think\facade\App;class Index extends AdminBaseController
+=======
+use think\facade\App;
+class Index extends AdminBaseController
+>>>>>>> 5760768332d19ead646fe80ae47ca2b28de46c30
 {   
     protected $adminUser;
     public function __construct() {
