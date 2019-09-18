@@ -29,7 +29,13 @@ class Index extends AdminBaseController
                     $list = $table->field('id,user_name,email,create_time')->limit($start,$length)->select();
                 }
                 $list = $this->object_array($list);
-                $this->assign('list',$list);
+                foreach ($list as $k=>$v){
+                    $button = '';
+                    $button .= "<button type='button' class='btn btn-default btn-md' data-toggle='modal' data-target='#editRoleModal'>修改</button>";
+                    $button .= "<a class='btn btn-info btn-delete' data-id=".$v['id'].">删除</a>";
+                    $list[$k][] = $button;
+                }
+//                $this->assign('list',$list);
                 $count = $table->count();
                 $data =  $this->show_paging_info($info['page_echo'],$count,$list);
                 return $data;
@@ -105,7 +111,8 @@ class Index extends AdminBaseController
             $file = request()->file('excel');
             $res = leading_in($file);
             if(is_array($res)){
-                $this->success('导入成功',url('Index/index'));
+                dump($res);die;
+//                $this->success('导入成功',url('Index/index'));
             }
         }
         return $this->fetch();

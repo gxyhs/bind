@@ -11,9 +11,18 @@
 
             <section class="panel">
                 <div class="x_title panel-heading">
-                    <button type="button" class="btn btn-default btn-md" data-toggle="modal" data-target="#addRoleModal">
-                        新增
-                    </button>
+                    <div style="overflow: hidden;">
+                        <button type="button" style="float: left" class="btn btn-default btn-md" data-toggle="modal" data-target="#addRoleModal">
+                            新增
+                        </button>
+                        <form method="post" action="{:url('Index/demo_in')}" style="float: left" class="" enctype="multipart/form-data" role="form"  id="form" >
+                            <input name="excel" type="file" class="">
+                            <input type="submit" value="导入Excel" class="">
+                        </form>
+                        <button type="button" style="float: right" class="btn btn-default btn-md">
+                            <a href="{:url('Index/demo_out')}" style="float: right">导出Execl</a>
+                        </button>
+                    </div>
                     <div class="" style="overflow: auto">
                         <form class="form-inline form-search" role="form" method="get">
                             <div class="form-group">
@@ -45,17 +54,9 @@
                             Rep
                         </th>
                         <th>
-                            Item
+                            Phone
                         </th>
-                        <th>
-                            Units
-                        </th>
-                        <th>
-                            Unit Cost
-                        </th>
-                        <th>
-                            Total
-                        </th>
+                        <th class="column-title no-link last"><span >操作</span></th>
                     </tr>
                     </thead>
                     <tbody>
@@ -79,25 +80,33 @@
             <div class="modal-body">
                 <div class="row">
                     <div class="">
-                        <div class="panel">
+                        <div class="x_panel">
                             <div class="x_content">
                                 <form class="form-horizontal form-label-left input_mask">
                                     <input type="hidden" name="extend" value="add_role">
                                     <div class="form-group">
-                                        <label for="add-state-name">字段1</label>
-                                        <input type="text" id="add-state-name" class="form-control"  name='name'>
+                                        <label class="control-label col-md-3 col-sm-3 col-xs-12">key1</label>
+                                        <div class="col-md-9 col-sm-9 col-xs-12">
+                                            <input type="text" class="form-control" name ="name" id="add-state-name" >
+                                        </div>
                                     </div>
                                     <div class="form-group">
-                                        <label for="add-state-name">字段1</label>
-                                        <input type="text" id="" class="form-control"  name='desc'>
+                                        <label class="control-label col-md-3 col-sm-3 col-xs-12">key1</label>
+                                        <div class="col-md-9 col-sm-9 col-xs-12">
+                                            <input type="text" class="form-control" name ="name" id="add-state-name" >
+                                        </div>
                                     </div>
                                     <div class="form-group">
-                                        <label for="add-state-name">字段1</label>
-                                        <input type="text" id="" class="form-control"  name='desc'>
+                                        <label class="control-label col-md-3 col-sm-3 col-xs-12">key1</label>
+                                        <div class="col-md-9 col-sm-9 col-xs-12">
+                                            <input type="text" class="form-control" name ="name" id="add-state-name" >
+                                        </div>
                                     </div>
                                     <div class="form-group">
-                                        <label for="add-state-name">字段1</label>
-                                        <input type="text" id="" class="form-control"  name='desc'>
+                                        <label class="control-label col-md-3 col-sm-3 col-xs-12">key1</label>
+                                        <div class="col-md-9 col-sm-9 col-xs-12">
+                                            <input type="text" class="form-control" name ="name" id="add-state-name" >
+                                        </div>
                                     </div>
                                     <div class="form-group">
                                         <div class="col-md-9 col-sm-9 col-xs-12 col-md-offset-3">
@@ -115,7 +124,42 @@
         </div>
     </div>
 </div>
+<div class="modal fade" id="editRoleModal" tabindex="-1" role="dialog" aria-labelledby="editModalLabel" aria-hidden="true">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h4 class="modal-title" style="text-align: center;font-size: 25px;">edit</h4>
+            </div>
+            <div class="modal-body">
+                <div class="row">
+                    <div class="">
+                        <div class="x_panel">
+                            <div class="x_content">
+                                <form class="form-horizontal form-label-left input_mask">
+                                    <input type="hidden" name="operator_id" value="" id="operator_id">
+                                    <input type="hidden" name="type" value="edit">
+                                    <div class="form-group">
+                                        <label class="control-label col-md-3 col-sm-3 col-xs-12">key1</label>
+                                        <div class="col-md-9 col-sm-9 col-xs-12">
+                                            <input type="text" class="form-control" name ="name" id="edit_name" >
+                                        </div>
+                                    </div>
+                                    <div class="form-group">
+                                        <div class="col-md-9 col-sm-9 col-xs-12 col-md-offset-3">
+                                            <button type="button" data-dismiss="modal" class="btn btn-primary">取消 </button>
+                                            <button type="submit" class="btn btn-success">确认</button>
+                                        </div>
+                                    </div>
 
+                                </form>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
 <!--footer section start-->
 <footer>
     2015 &copy; SlickLab by VectorLab.
