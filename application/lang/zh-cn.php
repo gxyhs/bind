@@ -16,16 +16,20 @@ return [
     'cancel' => '取消',
     'edit' => '修改',
     'delete' => '删除',
+    'add_phone' => '添加话机',
+    'details' => '详情',
 
     'role_manage' => '角色管理',
     'client' => '客户管理',
     'customer_list' => '客户列表',
     'telephone' => '话机管理',
 
-    'username' => '名称',
+    'username' => '账号',
     'email' => '邮箱',
     'operating' => '操作',
     'new_users' => '新增用户',
+    'customer' => '所属客户',
+    
     
 ];
 

@@ -15,6 +15,8 @@ return [
     'cancel' => 'Cancel',
     'edit' => 'modify',
     'delete' => 'delete',
+    'add_phone' => 'Add phone',
+    'details' => 'Details',
 
     'client' => 'Customer management',
     'customer_list' => 'Customer List',
@@ -24,6 +26,7 @@ return [
     'email' => 'mailbox',
     'operating' => 'operating',
     'new_users' => 'New users',
+    'customer' => 'Customer',
 ];
 
 ?>

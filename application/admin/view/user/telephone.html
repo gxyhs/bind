@@ -13,6 +13,15 @@
                                     <div  style="float: left;">
                                         <form class="form-inline form-search" role="form" method="get">
                                             <div class="form-group">
+                                                <label for="ary_to_form_9">客户:</label>
+                                                <select name="user_id">
+                                                    <option value="-1">全部</option>
+                                                    {foreach $userList as $vo}
+                                                        <option {if ( $user_id == 1)}selected=selected{/if} value="{$vo.id}">{$vo.user_name}</option>
+                                                    {/foreach}
+                                                </select>
+                                            </div>
+                                            <div class="form-group">
                                                 <label for="">Search:</label>
                                                 <input type="text" name="search" placeholder="name"" value="{$search}">
                                             </div>
@@ -21,7 +30,7 @@
                                         </form>
                                     </div>
                                     <button style="float: right" type="button" class="btn btn-default btn-md" id="addRoleModal">
-                                            {:lang('new_users')}
+                                            {:lang('add_phone')}
                                     </button>
                                 </div>
                             </div>
@@ -42,10 +51,10 @@
                                 {:lang('username')}
                             </th>
                             <th>
-                                {:lang('email')}
+                                {:lang('password')}
                             </th>
                             <th>
-                                addtime
+                                {:lang('customer')}
                             </th>
                             <th>
                                 {:lang('operating')}
@@ -74,21 +83,26 @@
                             <button type="button" class="close" data-dismiss="modal" aria-label="Close">  
                                 <span aria-hidden="true">×</span>  
                             </button>  
-                            <h4 class="modal-title" id="myModalLabel">{:lang('new_users')}</h4>  
+                            <h4 class="modal-title" id="myModalLabel">{:lang('add_phone')}</h4>  
                         </div>  
                         <div class="modal-body">  
                             <div class="form-group"> 
-                                <input type="hidden" class="form-control user_id" id="recipient-name"> 
+                                <input type="hidden" class="form-control bing_id" id="recipient-name"> 
                                 <label for="recipient-name" class="control-label">{:lang('username')}:</label>  
-                                <input type="text" class="form-control user_name" id="recipient-name">  
-                            </div>
-                            <div class="form-group">  
-                                <label for="email" class="control-label">{:lang('email')}:</label>
-                                <input type="text" class="form-control email" id="new_password">
+                                <input type="text" class="form-control bing_name" id="recipient-name">  
                             </div>
                             <div class="form-group">  
                                 <label for="email" class="control-label">{:lang('password')}:</label>
-                                <input type="password" class="form-control password" id="new_password">
+                                <input type="text" class="form-control password" id="new_password">
+                            </div>
+                            <div class="form-group">  
+                                <label for="email" class="control-label">{:lang('customer')}:</label>
+                                <select name="loan_daycount" id="user_bing_id">
+                                    <option value="-1">全部</option>
+                                    {foreach $userList as $vo}
+                                    <option value="{$vo.id}">{$vo.user_name}</option>
+                                    {/foreach}
+                                </select>
                             </div>
                         </div>  
                         <div class="modal-footer">  
@@ -108,14 +122,14 @@
                 $('#addUsermyModal').modal();
             })
             $('.submit').on('click',function(){
-                var user_name = $('.user_name').val();
-                var email = $('.email').val();
+                var bing_name = $('.bing_name').val();
+                var user_id = $('#user_bing_id').val();
                 var password = $('.password').val();
-                var id = $('.user_id').val();
+                var id = $('.bing_id').val();
                 $.ajax({
                     type : 'post',
-                    url : "{:url('User/user_add')}",
-                    data : {id:id,user_name:user_name,email:email,password:password},
+                    url : "{:url('User/tel_add')}",
+                    data : {id:id,bing_name:bing_name,user_id:user_id,password:password},
                     success:function(data){
                         if(data.status == 1){
                             toastr.success(data.message);
@@ -131,17 +145,18 @@
                 $('#addUsermyModal').modal();
                 $.ajax({
                     type : 'get',
-                    url : "{:url('User/user_edit')}?id="+id,
+                    url : "{:url('User/tel_edit')}?id="+id,
                     success:function(data){
-                        $('.user_name').val(data.user_name);
-                        $('.email').val(data.email);
-                        $('.user_id').val(data.id);
+                        $('.bing_name').val(data.bing_name);
+                        $('.password').val(data.password);
+                        $("#user_bing_id").find("option[value="+data.user_id+"]").attr("selected",true);
+                        $('.bing_id').val(data.id);
                     }
                 })
             }
-            function user_del(id){
-                if(window.confirm("您确定删除此客户吗？")) {
-                    window.location.href="{:url('User/user_del')}?id="+id;
+            function tel_del(id){
+                if(window.confirm("您确定删除此话机吗？")) {
+                    window.location.href="{:url('User/tel_del')}?id="+id;
                 }
             }
         </script>

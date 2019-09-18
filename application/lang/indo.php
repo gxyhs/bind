@@ -20,11 +20,14 @@ return [
     'client' => 'Manajemen pelanggan',
     'customer_list' => 'Daftar pelanggan',
     'telephone' => 'Manajemen telepon',
+    'add_phone' => 'Tambahkan telepon',
+    'details' => 'Detail',
 
     'username' => 'Nama',
     'email' => 'Kotak surat',
     'operating' => 'Operasi',
     'new_users' => 'Tambahkan pengguna',
+    'customer' => 'Pelanggan',
 ];
 
 ?>
