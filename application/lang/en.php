@@ -9,8 +9,21 @@ return [
     'original_password' => 'Original password',
     'new_password' => 'New password',
     'confirm_password' => 'Confirm password',
+    'password' => 'password',
+
     'submit' => 'Submit',
     'cancel' => 'Cancel',
+    'edit' => 'modify',
+    'delete' => 'delete',
+
+    'client' => 'Customer management',
+    'customer_list' => 'Customer List',
+    'telephone' => 'Telephone management',
+
+    'username' => 'Nama',
+    'email' => 'mailbox',
+    'operating' => 'operating',
+    'new_users' => 'New users',
 ];
 
 ?>

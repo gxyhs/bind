@@ -1,4 +1,8 @@
 <?php
+/**
+ * 上传呼叫案列
+ * @author yhs 2019.09.17
+ */
 namespace app\admin\controller;
 use app\Common\Controller\AdminBaseController;
 use app\Common\Model\AdminUserModel;
@@ -6,7 +10,6 @@ class Upload extends AdminBaseController
 {   
     public function list()
     {   
-        
         if($_POST || $_GET){
             $table = new AdminUserModel();
             $info = $this->get_paging_info();

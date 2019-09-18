@@ -10,8 +10,21 @@ return [
     'original_password' => 'Kata sandi asli',
     'new_password' => 'Kata sandi baru',
     'confirm_password' => 'Konfirmasikan kata sandi',
+    'password' => 'Kata sandi',
+
     'submit' => 'Kirim',
     'cancel' => 'Batalkan',
+    'edit' => 'Ubah',
+    'delete' => 'Hapus',
+
+    'client' => 'Manajemen pelanggan',
+    'customer_list' => 'Daftar pelanggan',
+    'telephone' => 'Manajemen telepon',
+
+    'username' => 'Nama',
+    'email' => 'Kotak surat',
+    'operating' => 'Operasi',
+    'new_users' => 'Tambahkan pengguna',
 ];
 
 ?>
