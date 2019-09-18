@@ -163,9 +163,9 @@ require $rootPath.'extend/PHPExcel/PHPExcel.php';
         //将表格里面的数据循环到数组中
         for ($i = 2; $i <= $highestRow; $i++) {
             //*为什么$i=2? (因为Excel表格第一行应该是姓名，年龄，班级，从第二行开始，才是我们要的数据。)
-            $data[$a]['id'] = $objPHPExcel->getActiveSheet()->getCell("A" . $i)->getValue(); //姓名
-            $data[$a]['user_name'] = $objPHPExcel->getActiveSheet()->getCell("B" . $i)->getValue(); //年龄
-            $data[$a]['password'] = $objPHPExcel->getActiveSheet()->getCell("C" . $i)->getValue(); //班级
+//            $data[$a]['id'] = $objPHPExcel->getActiveSheet()->getCell("A" . $i)->getValue(); //姓名
+            $data[$a]['lab_one'] = $objPHPExcel->getActiveSheet()->getCell("B" . $i)->getValue(); //年龄
+            $data[$a]['lab_two'] = $objPHPExcel->getActiveSheet()->getCell("C" . $i)->getValue(); //班级
             // 这里的数据根据自己表格里面有多少个字段自行决定
             $a++;
         }

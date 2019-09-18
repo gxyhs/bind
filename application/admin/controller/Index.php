@@ -18,15 +18,15 @@ class Index extends AdminBaseController
     public function index()
     {
         if($_POST || $_GET){
-            $table = new AdminUserModel();
+            $table = DB::table('tp_execl');
             $info = $this->get_paging_info();
             if(count($info)){
                 $length = $info['page_length'];
                 $start = $info['page_start'];
                 if(!empty(input('search'))){
-                    $list = $table->field('id,user_name,email,create_time')->whereOr([['user_name','like',"%".input('search')."%"]])->whereOr([['email','like',"%".input('search')."%"]])->limit($start,$length)->select();
+                    $list = $table->whereOr([['user_name','like',"%".input('search')."%"]])->whereOr([['email','like',"%".input('search')."%"]])->limit($start,$length)->select();
                 }else{
-                    $list = $table->field('id,user_name,email,create_time')->limit($start,$length)->select();
+                    $list = $table->limit($start,$length)->select();
                 }
                 $list = $this->object_array($list);
                 foreach ($list as $k=>$v){
@@ -111,8 +111,12 @@ class Index extends AdminBaseController
             $file = request()->file('excel');
             $res = leading_in($file);
             if(is_array($res)){
-                dump($res);die;
-//                $this->success('导入成功',url('Index/index'));
+               $result = DB::table('tp_execl')->insertAll($res);
+               if($result){
+                   $this->success('导入成功',url('Index/index'));
+               }else{
+                   $this->error('导入失败');
+               }
             }
         }
         return $this->fetch();
