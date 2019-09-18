@@ -96,8 +96,8 @@ class Index extends AdminBaseController
      * 测试导出
      */
     public function demo_out(){
-        $data = Db::table('tp_admin_user')->field('id,sex,email,user_name')->select();
-        $head = ['id','sex','emal','user_naem'];
+        $data = Db::table('tp_execl')->select();
+        $head = ['id','lab_one','lab_two'];
         $name = 'user';
         return leading_out($data,$head,$name);
         exit;
