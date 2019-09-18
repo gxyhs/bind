@@ -35,7 +35,9 @@
     <script src="js/respond.min.js"></script>
     <![endif]-->
 </head>
-
+<style>
+    .btn-info{margin-left:10px; }
+</style>
 <body class="sticky-header">
 
     <section>
@@ -65,12 +67,10 @@
                     <li><a href="{:url('admin/Index/index')}"><i class="fa fa-home"></i> <span> {:lang('pretest')}</span></a></li>
                     <li><a href="{:url('admin/Upload/list')}"><i class="fa fa-tasks"></i> <span> {:lang('upload_call_case')}</span></a></li>
                     <li class="menu-list">
-                        <a href=""><i class="fa fa-laptop"></i>  <span>Layouts</span></a>
+                        <a href=""><i class="fa fa-laptop"></i>  <span>{:lang('client')}</span></a>
                         <ul class="child-list">
-                            <li><a href="boxed-layout.html"> Boxed Page</a></li>
-                            <li><a href="collapsed-menu.html"> Sidebar Collapsed</a></li>
-                            <li><a href="blank-page.html"> Blank page</a></li>
-                            <li><a href="different-theme-layouts.html"> Different Theme Layouts</a></li>
+                            <li><a href="{:url('User/customer_list')}"> {:lang('customer_list')}</a></li>
+                            <li><a href="{:url('User/telephone')}"> {:lang('telephone')}</a></li>
                         </ul>
                     </li>
                     <li class="menu-list"><a href=""><i class="fa fa-book"></i> <span>UI Elements</span></a>

@@ -76,6 +76,10 @@ class AdminBaseController extends BaseController {
         $json_data = array ('sEcho'=>$echo,'iTotalRecords'=>$count,'iTotalDisplayRecords'=>$count,'aaData'=>$return_ary);
         return $json_data;
     }
+    /**
+     * array 二维数组
+     * return array
+     */
     public function object_array($array) { 
         $array = json_decode(json_encode($array),true);
         if(is_object($array)) {  
@@ -86,5 +90,11 @@ class AdminBaseController extends BaseController {
             }  
          }  
          return $array;  
+    }
+    public function operating($url,$msg){
+        return '<a class="btn btn-info btn-xs" href="'.$url.'">'.$msg.'</a>';
+    }
+    public function bt_onclick($click,$v,$msg){
+        return '<a class="btn btn-info btn-xs" onclick="'.$click.'('.$v.')">'.$msg.'</a>';
     }
 }
