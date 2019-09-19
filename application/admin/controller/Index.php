@@ -2,12 +2,12 @@
 namespace app\admin\controller;
 use app\Common\Controller\AdminBaseController;
 use think\Db;
-use think\Request;
 use think\File;
 use think\loader;
 use think\facade\Cookie;
+use think\Validate;
 use app\Common\Model\AdminUserModel;
-use think\facade\App;
+
 class Index extends AdminBaseController
 {   
     protected $adminUser;
@@ -30,9 +30,14 @@ class Index extends AdminBaseController
                 }
                 $list = $this->object_array($list);
                 foreach ($list as $k=>$v){
+                    $whatever = '';
+                    foreach ($v as $kk=>$vv){
+                        $whatever .= $kk.'='.$vv.'&';
+                    }
+                    $whatever = trim($whatever,'&');
                     $button = '';
-                    $button .= "<button type='button' class='btn btn-default btn-md' data-toggle='modal' data-target='#editRoleModal'>修改</button>";
-                    $button .= "<a class='btn btn-info btn-delete' data-id=".$v['id'].">删除</a>";
+                    $button .= "<button type='button' class='btn btn-default btn-md' data-toggle='modal' data-whatever='".$whatever."' data-target='#editRoleModal'>修改</button>";
+                    $button .= "<a class='btn btn-info btn-delete' data-id=".$v['id']." href=".url('Index/delete',['id'=>$v['id']]).">删除</a>";
                     $list[$k][] = $button;
                 }
 //                $this->assign('list',$list);
@@ -122,4 +127,71 @@ class Index extends AdminBaseController
         return $this->fetch();
 
     }
+    public function add(){
+        if(IS_POST){
+            $data = input('');
+            $rule = [
+                'lab_one' => 'require',
+                'lab_two' => 'require',
+            ];
+            $msg = [
+                'lab_one.require' => '不能为空',
+                'lab_two.require' => '不能为空',
+            ];
+            $validate = new Validate($rule,$msg);
+            if(!$validate->check($data)){
+                $this->error($validate->getError());
+            }
+            $res = DB::table('tp_execl')->insert($data);
+            if($res){
+                $this->success('添加成功',url('Index/index'));
+            }else{
+                $this->error('添加失败');
+            }
+        }else{
+            exit;
+        }
+    }
+    public function edit(){
+        if(IS_POST){
+            $data = input('');
+            $rule = [
+                'operator_id'      => 'require',
+                'lab_one' => 'require',
+                'lab_two' => 'require',
+            ];
+            $msg = [
+                'operator_id.require'      => '不能为空',
+                'lab_one.require' => '不能为空',
+                'lab_two.require' => '不能为空',
+            ];
+            $validate = new Validate($rule,$msg);
+            if(!$validate->check($data)){
+                $this->error($validate->getError());
+            }
+            $condition['id'] = $data['operator_id'];
+            unset($data['operator_id']);
+            $res = DB::table('tp_execl')->where($condition)->update($data);
+            if($res){
+                $this->success('修改成功',url('Index/index'));
+            }else{
+                $this->error('修改失败');
+            }
+        }else{
+            exit;
+        }
+    }
+
+    public function delete(){
+        if(IS_GET){
+            $condition['id'] = input('id') ?? $this->error('删除出错');
+            $res = Db::table('tp_execl')->where($condition)->delete();
+            if($res){
+                $this->success('删除成功',url('Index/index'));
+            }else{
+                $this->error('删除失败');
+            }
+        }
+    }
+
 }
