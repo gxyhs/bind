@@ -78,7 +78,116 @@
 
 </div>
 <!--body wrapper end-->
+<<<<<<< HEAD
 
+=======
+<div class="modal fade" id="addRoleModal" tabindex="-1" role="dialog" aria-labelledby="addRoleModalLabel" aria-hidden="true">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h4 class="modal-title" style="text-align: center;font-size: 25px;">新增</h4>
+            </div>
+            <div class="modal-body">
+                <div class="row">
+                    <div class="">
+                        <div class="x_panel">
+                            <div class="x_content">
+                                <form class="form-horizontal form-label-left input_mask" method="post" action="{:url('Index/add')}">
+                                    <div class="form-group">
+                                        <label class="control-label col-md-3 col-sm-3 col-xs-12">key1</label>
+                                        <div class="col-md-9 col-sm-9 col-xs-12">
+                                            <input type="text" class="form-control" name ="lab_one" id="add-state-name" >
+                                        </div>
+                                    </div>
+                                    <div class="form-group">
+                                        <label class="control-label col-md-3 col-sm-3 col-xs-12">key1</label>
+                                        <div class="col-md-9 col-sm-9 col-xs-12">
+                                            <input type="text" class="form-control" name ="lab_two" id="add-state-name" >
+                                        </div>
+                                    </div>
+
+                                    <div class="form-group">
+                                        <div class="col-md-9 col-sm-9 col-xs-12 col-md-offset-3">
+                                            <button type="button" data-dismiss="modal" class="btn btn-primary">取消</button>
+                                            <button type="submit" class="btn btn-success">确认</button>
+                                        </div>
+                                    </div>
+
+                                </form>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<div class="modal fade" id="editRoleModal" tabindex="-1" role="dialog" aria-labelledby="editModalLabel" aria-hidden="true">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h4 class="modal-title" style="text-align: center;font-size: 25px;">edit</h4>
+            </div>
+            <div class="modal-body">
+                <div class="row">
+                    <div class="">
+                        <div class="x_panel">
+                            <div class="x_content">
+                                <form class="form-horizontal form-label-left input_mask" method="post" action="{:url('Index/edit')}">
+                                    <input type="hidden" name="operator_id" value="" id="operator_id">
+                                    <div class="form-group">
+                                        <label class="control-label col-md-3 col-sm-3 col-xs-12" for="lab_one">key1</label>
+                                        <div class="col-md-9 col-sm-9 col-xs-12">
+                                            <input type="text" class="form-control" name ="lab_one" id="lab_one" >
+                                        </div>
+                                    </div>
+                                    <div class="form-group">
+                                        <label class="control-label col-md-3 col-sm-3 col-xs-12" for="lab_two">key1</label>
+                                        <div class="col-md-9 col-sm-9 col-xs-12">
+                                            <input type="text" class="form-control" name ="lab_two" id="lab_two" >
+                                        </div>
+                                    </div>
+                                    <div class="form-group">
+                                        <div class="col-md-9 col-sm-9 col-xs-12 col-md-offset-3">
+                                            <button type="button" data-dismiss="modal" class="btn btn-primary">取消 </button>
+                                            <button type="submit" class="btn btn-success">确认</button>
+                                        </div>
+                                    </div>
+
+                                </form>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<script>
+    $('#editRoleModal').on('show.bs.modal', function (event) {
+
+        var button = $(event.relatedTarget) ;// 触发事件的按钮
+        var recipient = button.data('whatever') ;// 解析出data-whatever内容
+
+        recipient = recipient.split("&");
+        var ary= new Array();
+
+        for(key  in recipient){
+            var str = recipient[key];
+            var temp = str.split("=");
+            ary[temp[0]] = temp[1];
+        }
+        var modal = $(this);
+        modal.find('#operator_id').val(ary['id']);
+        modal.find('#lab_one').val(ary['lab_one']);
+        modal.find('#lab_two').val(ary['lab_two']);
+    });
+</script>
+<!--footer section start-->
+<footer>
+    2015 &copy; SlickLab by VectorLab.
+</footer>
+>>>>>>> 003f728e5f26eaeb6df6fba19d0829007a380cce
 <!--footer section end-->
 
 </div>

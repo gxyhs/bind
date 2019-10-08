@@ -128,4 +128,71 @@ class Index extends AdminBaseController
             $this->error('empty ids');
         }
     }
+    public function add(){
+        if(IS_POST){
+            $data = input('');
+            $rule = [
+                'lab_one' => 'require',
+                'lab_two' => 'require',
+            ];
+            $msg = [
+                'lab_one.require' => '不能为空',
+                'lab_two.require' => '不能为空',
+            ];
+            $validate = new Validate($rule,$msg);
+            if(!$validate->check($data)){
+                $this->error($validate->getError());
+            }
+            $res = DB::table('tp_execl')->insert($data);
+            if($res){
+                $this->success('添加成功',url('Index/index'));
+            }else{
+                $this->error('添加失败');
+            }
+        }else{
+            exit;
+        }
+    }
+    public function edit(){
+        if(IS_POST){
+            $data = input('');
+            $rule = [
+                'operator_id'      => 'require',
+                'lab_one' => 'require',
+                'lab_two' => 'require',
+            ];
+            $msg = [
+                'operator_id.require'      => '不能为空',
+                'lab_one.require' => '不能为空',
+                'lab_two.require' => '不能为空',
+            ];
+            $validate = new Validate($rule,$msg);
+            if(!$validate->check($data)){
+                $this->error($validate->getError());
+            }
+            $condition['id'] = $data['operator_id'];
+            unset($data['operator_id']);
+            $res = DB::table('tp_execl')->where($condition)->update($data);
+            if($res){
+                $this->success('修改成功',url('Index/index'));
+            }else{
+                $this->error('修改失败');
+            }
+        }else{
+            exit;
+        }
+    }
+
+    public function delete(){
+        if(IS_GET){
+            $condition['id'] = input('id') ?? $this->error('删除出错');
+            $res = Db::table('tp_execl')->where($condition)->delete();
+            if($res){
+                $this->success('删除成功',url('Index/index'));
+            }else{
+                $this->error('删除失败');
+            }
+        }
+    }
+
 }
