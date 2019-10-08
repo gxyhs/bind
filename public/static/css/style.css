@@ -76,8 +76,8 @@ Author: Mosaddek Hossain
 */
 
 
-@import url(//fonts.useso.com/css?family=Source+Sans+Pro:200,300,400,600,700,900,200italic,300italic,400italic,600italic,700italic,900italic);
-@import url(//fonts.useso.com/css?family=Abel);
+/* @import url(//fonts.useso.com/css?family=Source+Sans+Pro:200,300,400,600,700,900,200italic,300italic,400italic,600italic,700italic,900italic);
+@import url(//fonts.useso.com/css?family=Abel); */
 
 @import url('bootstrap.min.css');
 @import url('bootstrap-reset.css');
@@ -87,7 +87,7 @@ Author: Mosaddek Hossain
 @import url('icomoon-weather.css');
 @import url('default-theme.css');
 
-
+html,body,section,div{touch-action:none}
 body {
     font-family: 'Source Sans Pro', sans-serif;
     color: #323232;

@@ -13,17 +13,17 @@ return [
     // 数据库类型
     'type'            => 'mysql',
     // 服务器地址
-    'hostname'        => '127.0.0.1',
+    'hostname'        => 'rm-k1aw33qj9i6d8jd2x50740.mysql.ap-southeast-5.rds.aliyuncs.com',
     // 数据库名
-    'database'        => 'bing',//pos_sys_db
+    'database'        => 'pos_sys_db',//pos_sys_db
     // 用户名
-    'username'        => 'root',
+    'username'        => 'pos_db',
     // 密码
-    'password'        => 'root',
+    'password'        => 'Ao9MojaU13@Ka2U8!Tn1P',
     // 端口
     'hostport'        => '3306',
     // 连接dsn
-    'dsn'             => '',
+    'dsn'             => 'mysql:host=rm-k1aw33qj9i6d8jd2x50740.mysql.ap-southeast-5.rds.aliyuncs.com;dbname=pos_sys_db',
     // 数据库连接参数
     'params'          => [],
     // 数据库编码默认采用utf8

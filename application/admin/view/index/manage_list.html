@@ -1,7 +1,5 @@
 
             {include file="public/header" /}
-           
-
             <!--body wrapper start-->
             <div class="wrapper">
 
@@ -15,15 +13,15 @@
                                     <div  style="float: left;">
                                         <form class="form-inline form-search" role="form" method="get">
                                             <div class="form-group">
-                                                <label for="">搜索</label>
-                                                <input type="text" name="search" placeholder="搜索" value="{$search}">
+                                                <label for="">Search:</label>
+                                                <input type="text" name="search" placeholder="name"" value="{$search}">
                                             </div>
                                             <button type="submit" class="btn btn-default">submit</button>
                                             <button type="reset" class="btn btn-default">clear</button>
                                         </form>
                                     </div>
                                     <button style="float: right" type="button" class="btn btn-default btn-md" id="addRoleModal">
-                                        {:lang('add')}
+                                            {:lang('add')}
                                     </button>
                                 </div>
                             </div>
@@ -41,10 +39,7 @@
                                 id
                             </th>
                             <th>
-                                {:lang('phone')}
-                            </th>
-                            <th>
-                                {:lang('desc')}
+                                {:lang('username')}
                             </th>
                             <th>
                                 addtime
@@ -61,38 +56,33 @@
                         </table>
                         </section>
                     </div>
+
                 </div>
+                
+
             </div>
             <!--body wrapper end-->
 
-            <!--footer section start-->
-            <footer>
-                2015 &copy; SlickLab by VectorLab.
-            </footer>
-            <!--footer section end-->
 
-        </div>
-        <!-- body content end-->
-        <div class="modal fade" id="addUsermyModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">  
+            <div class="modal fade" id="addUsermyModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">  
                 <div class="modal-dialog" role="document">  
                     <div class="modal-content">  
                         <div class="modal-header">  
                             <button type="button" class="close" data-dismiss="modal" aria-label="Close">  
                                 <span aria-hidden="true">×</span>  
                             </button>  
-                            <h4 class="modal-title" id="title">{:lang('add_phone')}</h4>  
+                            <h4 class="modal-title" id="title">{:lang('new_users')}</h4>  
                         </div>  
                         <div class="modal-body">  
                             <div class="form-group"> 
-                                <input type="hidden" class="form-control bing_id" id="recipient-name"> 
-                                <label for="recipient-name" class="control-label">{:lang('phone')}:</label>  
-                                <input type="text" class="form-control phone" id="recipient-name">  
+                                <input type="hidden" class="form-control user_id" id="recipient-name"> 
+                                <label for="recipient-name" class="control-label">{:lang('username')}:</label>  
+                                <input type="text" class="form-control account" id="recipient-name">  
                             </div>
                             <div class="form-group">  
-                                <label for="email" class="control-label">{:lang('desc')}:</label>
-                                <textarea style="height: 100px;" class="form-control desc"></textarea>
+                                <label for="email" class="control-label">{:lang('password')}:</label>
+                                <input type="password" class="form-control password" id="new_password">
                             </div>
-                            
                         </div>  
                         <div class="modal-footer">  
                             <button type="button" class="btn btn-default" data-dismiss="modal">{:lang('cancel')}</button>  
@@ -101,21 +91,25 @@
                     </div>  
                 </div>  
             </div>  
+
         </div>
+        <!-- body content end-->
     </section>
-    
-    {include file="public/footer" /}
     <script>
+            
             $('#addRoleModal').on('click', function () {
+                var new_users = "{:lang('new_users')}";
+                $('#title').text(new_users);
                 $('#addUsermyModal').modal();
             })
             $('.submit').on('click',function(){
-                var phone = $('.phone').val();
-                var desc = $('.desc').val();
+                var account = $('.account').val();
+                var password = $('.password').val();
+                var id = $('.user_id').val();
                 $.ajax({
                     type : 'post',
-                    url : "{:url('Upload/call_add')}",
-                    data : {phone:phone,desc:desc},
+                    url : "{:url('Manage/manage_add')}",
+                    data : {id:id,account:account,password:password},
                     success:function(data){
                         if(data.status == 1){
                             toastr.success(data.message);
@@ -127,10 +121,23 @@
                     }
                 })
             })
-            
-            function call_del(id){
-                if(window.confirm("您确定删除此记录吗？")) {
-                    window.location.href="{:url('Upload/call_del')}?id="+id;
+            function user_edit(id){
+                $('#addUsermyModal').modal();
+                $.ajax({
+                    type : 'get',
+                    url : "{:url('Manage/manage_edit')}?id="+id,
+                    success:function(data){
+                        $('.account').val(data.account);
+                        $('.user_id').val(data.id);
+                        var edit = "{:lang('edit')}";
+                        $('#title').text(edit);
+                    }
+                })
+            }
+            function user_del(id){
+                if(window.confirm("您确定删除此客户吗？")) {
+                    window.location.href="{:url('Manage/manage_del')}?id="+id;
                 }
             }
         </script>
+    {include file="public/footer" /}

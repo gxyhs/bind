@@ -141,11 +141,13 @@ require $rootPath.'extend/PHPExcel/PHPExcel.php';
  function leading_in($file){
 
     // 移动到框架应用根目录/public/uploads/ 目录下
-     $info = $file->validate(['size'=>1048576,'ext'=>'xls,xlsx'])->move( './upload');
+     $info = $file->validate(['size'=>1048576,'ext'=>'xls,xlsx'])->move( '/data/upload');
     if ($info) {
         $fileName = $info->getSaveName();
         //获取文件路径
-        $filePath = App::getRootPath().'public'.DIRECTORY_SEPARATOR.'upload'.DIRECTORY_SEPARATOR.$fileName;
+        //$filePath = App::getRootPath().'public'.DIRECTORY_SEPARATOR.'upload'.DIRECTORY_SEPARATOR.$fileName;
+        $filePath = '/data/upload'.DIRECTORY_SEPARATOR.$fileName;
+        
         //获取文件后缀
         $suf = $info->getExtension();
         if ($suf == 'xlsx') {
@@ -164,8 +166,9 @@ require $rootPath.'extend/PHPExcel/PHPExcel.php';
         for ($i = 2; $i <= $highestRow; $i++) {
             //*为什么$i=2? (因为Excel表格第一行应该是姓名，年龄，班级，从第二行开始，才是我们要的数据。)
 //            $data[$a]['id'] = $objPHPExcel->getActiveSheet()->getCell("A" . $i)->getValue(); //姓名
-            $data[$a]['lab_one'] = $objPHPExcel->getActiveSheet()->getCell("B" . $i)->getValue(); //年龄
-            $data[$a]['lab_two'] = $objPHPExcel->getActiveSheet()->getCell("C" . $i)->getValue(); //班级
+            $data[$a]['phone'] = $objPHPExcel->getActiveSheet()->getCell("A" . $i)->getValue(); //年龄
+            $data[$a]['extend_id'] = $objPHPExcel->getActiveSheet()->getCell("B" . $i)->getValue(); //年龄
+            $data[$a]['case_message'] = $objPHPExcel->getActiveSheet()->getCell("C" . $i)->getValue(); //班级
             // 这里的数据根据自己表格里面有多少个字段自行决定
             $a++;
         }

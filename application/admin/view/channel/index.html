@@ -9,7 +9,7 @@
 
         <div class="col-sm-12">
 
-            <section class="panel" >
+            <section class="panel">
                 <div class="x_title panel-heading">
                     <div style="overflow: hidden;">
                         
@@ -26,7 +26,7 @@
                             <button type="submit" class="btn btn-default">submit</button>
                             <button type="reset" class="btn btn-default">clear</button>
                         </form>
-                        <!-- <form method="post" action="{:url('Index/demo_in')}" style="float: right" class="" enctype="multipart/form-data" role="form"  id="form" >
+                        <!-- <form method="post" action="{:url('Channel/demo_in')}" style="float: right" class="" enctype="multipart/form-data" role="form"  id="form" >
                             <input name="excel" type="file" class="">
                             <input type="submit" value="导入Excel" class="">
                         </form> -->
@@ -88,7 +88,7 @@
 <script>
     function call_del(id){
         if(window.confirm("您确定删除此记录吗？")) {
-            window.location.href="{:url('Index/call_del')}?id="+id;
+            window.location.href="{:url('Channel/call_del')}?id="+id;
         }
     }
     $('#batch_del').click(function(){
@@ -104,7 +104,7 @@
             if(arrystr == ''){
                 toastr.error('empty ids');
             }
-            window.location.href="{:url('Index/batch_del')}?ids="+arrystr;
+            window.location.href="{:url('Channel/batch_del')}?ids="+arrystr;
         }
     })
 </script>

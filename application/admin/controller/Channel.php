@@ -1,0 +1,416 @@
+<?php
+/**
+ * 客户管理
+ * @author yhs 2019.09.17
+ */
+namespace app\admin\controller;
+use app\Common\Controller\ChannelBaseController;
+use app\Common\Model\ChannelUserModel;
+use app\Common\Model\SoftphoneModel;
+use think\Request;
+use think\File;
+use think\loader;
+use app\Common\Model\CallCaseModel;
+use app\Common\Model\CallSoftphoneModel;
+use think\facade\App;
+use think\Db;
+
+class Channel extends ChannelBaseController
+{   
+    public function __construct() {
+        parent::__construct();
+        $this->channelUser = new ChannelUserModel();
+        $this->softphone = new SoftphoneModel();
+        $this->CallCase = new CallCaseModel();
+        $this->CallSoftphone = new CallSoftphoneModel();
+        $this->status = [
+            lang('offline'),
+            lang('online'),
+            lang('in_the_call'),
+            lang('talking'),
+        ];
+	}
+    public function index(){
+        if($_POST || $_GET){
+            $info = $this->get_paging_info();
+            if(count($info)){
+                $length = $info['page_length'];
+                $start = $info['page_start'];
+                $list = $this->CallCase->field('id,task_id,phone,extend_id,case_message,add_time')->where('channel_id',session('channel_uid'))->where([['extend_id','like',"%".input('search')."%"]])->limit($start,$length)->order('add_time desc')->select();
+                
+                $list = $this->object_array($list);
+                foreach ($list as $k=>$v){
+                    $find =  Db::table('sys_call_case_task')->field('id,name')->where('id',$v['task_id'])->find();
+                    $list[$k]['task_id'] = $find['name'];
+                    $list[$k]['id'] = '<input type="checkbox" class="ids" id="'.$v['id'].'">';
+                    $list[$k][] = $this->bt_onclick('call_del',$v['id'],lang('delete'));
+                }
+                $count = $this->CallCase->count();
+                $data =  $this->show_paging_info($info['page_echo'],$count,$list);
+                return $data;
+            }
+        }
+        $this->assign('search',input('search'));
+        return $this->fetch();
+    }
+    public function change_password(){
+        if(IS_POST){
+            $original = md5(trim($_POST['original_password']));
+            $uid = session('channel_uid');
+            $condition = ['id'=>$uid];
+            $oglFind = $this->ChannelUser->where($condition)->find();
+            $back = [];
+            if($original != $oglFind->password){
+                $back['message'] = "Kata sandi asli salah";
+                $back['status'] = 0;
+                return json($back);
+            }
+            if(trim($_POST['new_password']) != trim($_POST['confirm_password'])){
+                $back['message'] = "Dua kata sandi tidak konsisten";
+                $back['status'] = 0;
+                return json($back);
+            }
+            try{
+                $this->ChannelUser->where($condition)->update(['password'=>md5(trim($_POST['new_password']))]);
+                $back['message'] = "success";
+                $back['status'] = 1;
+            }catch(Exception $e){
+                $back['message'] = $e->getMessage();
+                $back['status'] = 0;
+            }
+            return json($back);
+        }else{
+            return json(['status'=>0]);
+        }
+    }
+    /**
+     * 导入
+     */
+    public function demo_in(){
+        if($_FILES){
+            $file = request()->file('excel');
+            $res = leading_in($file);
+            foreach($res as $k=>$v){
+                $res[$k]['add_time'] = date('Y-m-d H:i:s');
+                $res[$k]['channel_id'] = session('channel_uid');
+            }
+            if(is_array($res)){
+               $result = $this->CallCase->insertAll($res);
+               if($result){
+                   $this->success('导入成功',url('Channel/index'));
+               }else{
+                   $this->error('导入失败');
+               }
+            }
+        }
+        return $this->fetch();
+    }
+    public function call_del(){
+        $del = $this->CallCase->where(['id'=>input('id')])->delete();
+        if($del){
+            $this->redirect('Channel/index');
+        }else{
+            $this->error('success');
+        }
+    }
+    public function batch_del(){
+        if(input('ids')){
+            $ids = explode(',',input('ids'));
+            $del = $this->CallCase->where(['id'=>$ids])->delete();
+            if($del){
+                $this->redirect('Channel/index');
+            }else{
+                $this->error('error');
+            }
+        }else{
+            $this->error('empty ids');
+        }
+    }
+    /**
+     * 话机管理模块
+     *  @author yhs 2019.09.18
+     */
+    public function telephone()
+    {   
+        if($_POST || $_GET){
+            $info = $this->get_paging_info();
+            if(count($info)){
+                $length = $info['page_length'];
+                $start = $info['page_start'];
+                $condition = array();
+                
+                $condition['channel_id'] = session('channel_uid');
+                $list = $this->softphone->field('id,account,password,status,enable,add_time')->where($condition)->where([['account','like',"%".input('search')."%"]])->limit($start,$length)->select();
+                
+                $list = $this->object_array($list);
+                foreach($list as $k=>$v){
+                    $list[$k]['id'] = '<input type="checkbox" class="ids" id="'.$v['id'].'">';
+                    $list[$k]['status'] = $this->status[$v['status']];
+                    $list[$k]['enable'] = $v['enable'] == 1 ? lang('yes') : lang('no');
+                    
+                }
+                $count = $this->softphone->count();
+                $data =  $this->show_paging_info($info['page_echo'],$count,$list);
+                return $data;
+            }
+        }
+        $this->assign('search',input('search'));
+        $this->assign('status_key',input('status'));
+        $this->assign('status',$this->status);
+        $userList = $this->channelUser->field('id,account')->select();
+        $this->assign('userList', $this->object_array($userList));
+        return $this->fetch();
+    }
+    public function tel_add(){
+        if(empty(input('account')) || input('channel_id') == -1 || empty(input('password'))){
+            $back['message'] = "Memiliki opsi yang tidak terisi";
+            $back['status'] = 0;
+            return json($back);
+        }
+        if(empty(input('id'))){
+            $_POST['add_time'] = date('Y-m-d H:i:s');
+        }
+        try{
+            if(empty(input('id'))){
+                $this->softphone->insert($_POST);
+            }else{
+                $this->softphone->where(['id'=>input('id')])->update($_POST);
+            }
+            $back['message'] = "success";
+            $back['status'] = 1;
+        }catch(Exception $e){
+            $back['message'] = $e->getMessage();
+            $back['status'] = 0;
+        }
+        return json($back);
+    }
+    public function tel_edit(){
+        if(input('id')){
+            $find = $this->softphone->where(['id'=>input('id')])->find();
+            return json($find);
+        }
+    }
+    public function tel_del(){
+        $del = $this->softphone->where(['id'=>input('id')])->delete();
+        if($del){
+            $this->redirect('Channel/telephone');
+        }else{
+            $this->error('error');
+        }
+        
+    }
+    /**
+     * 批量添加到呼叫任务
+     */
+    public function batch_call_task(){
+        $ids = explode(',',input('ids'));
+        foreach($ids as $k=>$v){
+            $find = $this->CallSoftphone->where(['task_id'=>$v])->find();
+            $soft = $this->softphone->where(['id'=>$v])->find();
+            if(empty($find)){
+                $data = ['task_id'=>$v,'account'=>$soft['account'],'add_time'=>date('Y-m-d H:i:s')];
+                $this->CallSoftphone->insert($data);
+            }
+        }
+        $this->redirect('Channel/call_case_softphone');
+    }
+    /**
+     * 呼叫任务列表
+     */
+    public function call_case_softphone(){
+        if(input()){
+            $info = $this->get_paging_info();
+            if(count($info)){
+                $length = $info['page_length'];
+                $start = $info['page_start'];
+                $condition = array();
+                $condition['channel_id'] = session('channel_uid');
+                $list = Db::table('sys_call_case_task')->field('id,name,softphone_count,call_case_count,call_multiple,recall_count,status,add_time')->where($condition)->where([['name','like',"%".input('search')."%"]])->limit($start,$length)->order('add_time desc')->select();
+                
+                $list = $this->object_array($list);
+                foreach($list as $k=>$v){
+                    $list[$k]['status'] = $this->status[$v['status']];
+                    if($v['status'] == 1){
+                        $str = $this->bt_onclick('start',$v['id'],lang('stop'));
+                    }elseif($v['status'] == 0){
+                        $str = $this->bt_onclick('start',$v['id'],lang('start'));
+                    }else{
+                        $str = $this->bt_onclick('start',$v['id'],lang('start_again'));
+                    }
+                    $url = url('Channel/edit_call_case_softphone',['id'=>$v['id']]);
+                    $list[$k][] = $str.$this->operating($url,lang('edit')).$this->bt_onclick('task_del',$v['id'],lang('delete'));
+                }
+                $count = $this->softphone->count();
+                $data =  $this->show_paging_info($info['page_echo'],$count,$list);
+                return $data;
+            }
+        }
+        $this->assign('search',input('search'));
+        $this->assign('status_key',input('status'));
+        $this->assign('status',$this->status);
+        $userList = $this->channelUser->field('id,account')->select();
+        $this->assign('userList', $this->object_array($userList));
+        return $this->fetch();
+    }
+    public function add_call_case_softphone(){
+
+        $where = [
+            'channel_id' => session('channel_uid'),
+        ];
+        //任务表
+        $case_task = Db::table('sys_call_case_task')->where($where)->select();
+        $ids = [];
+        foreach($case_task as $v){
+            $ids[] = $v['id'];
+        }
+        $call_soft = $this->CallSoftphone->where(['task_id'=>$ids])->select();
+        $accounts = [];
+        foreach($call_soft as $v){
+            $accounts[] = $v['account'];
+        }
+        //->whereNotIn('account',$accounts)
+        $soft = $this->softphone->field('id,account')->where($where)->select();
+        $this->assign('soft',$soft);
+        return $this->fetch();
+    }
+    public function edit_call_case_softphone(){
+        $table = Db::table('sys_call_case_task');
+        $id = input('id');
+        if(empty($id)){
+            $this->error('error');
+        }
+        $this->assign('id',$id);
+        $find = $table->where('id',$id)->find();
+        $this->assign('find',$find);
+        $where = [
+            'channel_id' => session('channel_uid'),
+        ];
+        $CallSoftphone = $this->CallSoftphone->where(['task_id'=>$find['id']])->select();
+        $accounts = [];
+        foreach($CallSoftphone as $k=>$v){
+            $accounts[] = $v['account'];
+        }
+        $this->assign('checked',$accounts);
+        $this->assign('accounts',implode(',',$accounts));
+        $soft = $this->softphone->field('id,account')->where($where)->select();
+        $this->assign('soft',$soft);
+        return $this->fetch();
+    }
+    //开始任务
+    public function task_start(){
+        $id = input('id');
+        $find = Db::table('sys_call_case_task')->where('id',$id)->find();
+        if($find['status'] == 1){
+            $status = ['status'=>2];
+        }elseif($find['status'] == 0){
+            $status = ['status'=>1];
+        }else{
+            $status = ['status'=>1];
+            $data['status'] = 0;
+            $data['call_duration'] = 0;
+            $data['call_duration'] = 0;
+            $this->CallCase->where('task_id',$id)->update($data);
+        }
+        Db::table('sys_call_case_task')->where('id',$id)->update($status);
+        $this->redirect('Channel/call_case_softphone');
+    }
+    //删除任务
+    public function task_del(){
+        $id = input('id');
+        $this->CallCase->where('task_id',$id)->delete();
+        Db::table('sys_call_case_task')->where('id',$id)->delete();
+        $this->redirect('Channel/call_case_softphone');
+    }
+    public function add_call_case_softphone_ajax(){
+        Db::startTrans();
+        try{
+            // if(empty(input('name'))){
+            //     $this->error('empty name',url('channel/add_call_case_softphone'));
+            // }
+            $call_soft = explode(',',input('call_soft'));
+            $softphone_count = count($call_soft);
+            
+            if(input('id')){//修改 
+                $id = input('id');
+                $data_edit = [
+                    'softphone_count' => $softphone_count,
+                    'call_multiple' => input('call_multiple'),
+                    'recall_count' => input('recall_count'),
+                ];
+                Db::table('sys_call_case_task')->where('id',$id)->update($data_edit);
+                $this->CallSoftphone->where('task_id',$id)->delete();
+                $this->add_softphone($call_soft,$id);
+            }else{
+                $data = [
+                    'name' => input('name'),
+                    'channel_id' => session('channel_uid'),
+                    'softphone_count' => $softphone_count,
+                    'call_multiple' => input('call_multiple'),
+                    'recall_count' => input('recall_count'),
+                    'add_time' => date('Y-m-d H:i:s'),
+                ];
+                $id = Db::table('sys_call_case_task')->insertGetId($data);
+                if($id){
+                    $file = request()->file('excel');
+                    $call_case_count = $this->excel($file,$id);
+                    //更新呼叫数量
+                    Db::table('sys_call_case_task')->where('id',$id)->update(['call_case_count'=>$call_case_count]);
+                    $this->add_softphone($call_soft,$id);
+                }
+            }
+            Db::commit();
+            $this->redirect('Channel/call_case_softphone');
+        }catch(Exception $e){
+            Db::rollback();
+            $this->error($e->getMessage());
+        }
+    }
+    //导入excel
+    public function excel($file,$id){
+        $res = leading_in($file);
+	$data = [];
+        foreach($res as $k=>$v){
+            if(!empty($v['phone'])){
+               // $this->error('empty phone',url('channel/add_call_case_softphone'));
+            $data[$k]['extend_id'] = $v['extend_id'];
+	    $data[$k]['case_message']= $v['case_message'];
+            $data[$k]['channel_id'] = session('channel_uid');
+            $data[$k]['add_time'] = date('Y-m-d H:i:s');
+            $data[$k]['task_id'] = $id;
+	   $data[$k]['phone'] = $v['phone'];
+	    }
+        }//print_r($data);die;
+        $result = $this->CallCase->insertAll($data);
+        return count($data);
+    }
+    //添加呼叫表
+    public function add_softphone($data,$id){
+        foreach($data as $k=>$v){
+            $res[$k]['add_time'] = date('Y-m-d H:i:s');
+            $res[$k]['task_id'] = $id;
+            $res[$k]['account'] = $v;
+        }
+        $result = $this->CallSoftphone->insertAll($res);
+        return $result;
+    }
+    /**
+     * 话机详情
+     */
+    public function tel_details(){
+
+        return $this->fetch();
+    }
+    /**
+     * uuid
+     */
+    public function guid(){
+        $str = md5(uniqid(mt_rand(), true));
+        $uuid  = substr($str,0,8);
+        $uuid .= substr($str,8,4);
+        $uuid .= substr($str,12,4);
+        $uuid .= substr($str,16,4);
+        $uuid .= substr($str,20,12);
+        return  $uuid;
+    
+    }
+}

@@ -6,7 +6,7 @@
     <meta name="description" content="Admin Template">
     <meta name="keywords" content="admin dashboard, admin, flat, flat ui, ui kit, app, web app, responsive">
     <link rel="shortcut icon" href="/static/img/ico/favicon.png">
-    <title>Login</title>
+    <title>User</title>
 
     <!-- Base Styles -->
     <link href="/static/css/style.css" rel="stylesheet">
@@ -28,27 +28,24 @@
 
       <h2 class="form-heading">login</h2>
       <div class="container log-row">
-          <form class="form-signin" action="{:url('login/login')}" method="post">
+          <form class="form-signin" action="{:url('Soft/login')}" method="post">
               <div class="login-wrap">
-                  <input type="text" class="form-control" placeholder="User ID" name="user_name" autofocus>
+                  <input type="text" class="form-control" placeholder="User ID" name="account" autofocus>
                   <input type="password" class="form-control" placeholder="Password" name="password">
                   <div>
                     <input class="captcha" type="text" class="form-control" placeholder="Verification Code" name="captcha">
-                    <img width="140px;" onclick="changeCode(this)" src="{:url('Login/verify')}" alt="captcha" />
+                    <img width="140px;" onclick="changeCode(this)" src="{:url('Soft/verify')}" alt="captcha" />
                   </div>
                   <button class="btn btn-lg btn-success btn-block" type="submit">LOGIN</button>
                   
-                  <!-- <label class="checkbox-custom check-success">
-                      <input type="checkbox" value="remember-me" id="checkbox1"> <label for="checkbox1">Remember me</label>
-                      <a class="pull-right" data-toggle="modal" href="#forgotPass"> Forgot Password?</a> 
-                  </label>-->
+                  
 
-                  <div class="registration">
+                  <!-- <div class="registration">
                       Don't have an account yet?
                       <a class="" href="{:url('Regist/index')}">
                           Create an account
                       </a>
-                  </div>
+                  </div> -->
 
               </div>
           </form>
@@ -67,7 +64,7 @@
     // 点击验证码刷新图片
     function changeCode(obj)
     {
-        var url = "{:url('login/verify',['random'=>"+Math.random+"])}";  //兼容低版本的浏览器
+        var url = "{:url('Login/verify',['random'=>"+Math.random+"])}";  //兼容低版本的浏览器
         obj.src = url;
     }
 </script>

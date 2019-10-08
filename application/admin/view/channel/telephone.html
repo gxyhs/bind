@@ -10,17 +10,9 @@
                         <section class="panel">
                             <div class="x_title panel-heading">
                                 <div class="" style="overflow: auto">
-                                    <div  style="float: left;">
-                                        <form class="form-inline form-search" role="form" method="get">
-                                            <div class="form-group">
-                                                <label for="ary_to_form_9">客户:</label>
-                                                <select name="channel_id">
-                                                    <option value="-1">全部</option>
-                                                    {foreach $userList as $vo}
-                                                        <option {if ( $channel_id == $vo['id'])}selected=selected{/if} value="{$vo.id}">{$vo.account}</option>
-                                                    {/foreach}
-                                                </select>
-                                            </div>
+                                    
+                                        <form class="form-inline form-search" role="form" method="get" style="float:left">
+                                            
                                             <div class="form-group">
                                                 <label for="">Search:</label>
                                                 <input type="text" name="search" placeholder="account"" value="{$search}">
@@ -28,10 +20,7 @@
                                             <button type="submit" class="btn btn-default">submit</button>
                                             <button type="reset" class="btn btn-default">clear</button>
                                         </form>
-                                    </div>
-                                    <button style="float: right" type="button" class="btn btn-default btn-md" id="addRoleModal">
-                                            {:lang('add_phone')}
-                                    </button>
+                                        <!-- <button id="call_task" style="float:right" type="text" class="btn btn-default">{:lang('add_to_call_list')}</button> -->
                                 </div>
                             </div>
                             <!-- <header class="panel-heading ">
@@ -44,8 +33,8 @@
                         <table class="table datatable-ajax data-table">
                         <thead>
                         <tr>
-                            <th>
-                                id
+                            <th style="width: 13px;" class="sorting_desc" tabindex="0" aria-controls="DataTables_Table_0" rowspan="1" colspan="1" aria-label=": activate to sort column ascending" aria-sort="descending">
+                                <input type="checkbox" class="check-all">
                             </th>
                             <th>
                                 {:lang('username')}
@@ -53,9 +42,7 @@
                             <th>
                                 {:lang('password')}
                             </th>
-                            <th>
-                                {:lang('customer')}
-                            </th>
+                            
                             <th>
                                 {:lang('status')}
                             </th>
@@ -65,9 +52,7 @@
                             <th>
                                 addtime
                             </th>
-                            <th>
-                                {:lang('operating')}
-                            </th>
+                           
                             
                         </tr>
                         </thead>
@@ -98,6 +83,7 @@
                             <div class="form-group">  
                                 <label for="email" class="control-label">{:lang('customer')}:</label>
                                 <select name="loan_daycount" id="channel_id">
+                                    <option value="-1">全部</option>
                                     {foreach $userList as $vo}
                                     <option value="{$vo.id}">{$vo.account}</option>
                                     {/foreach}
@@ -133,8 +119,6 @@
     </section>
     <script>
             $('#addRoleModal').on('click', function () {
-                var add_phone = "{:lang('add_phone')}";
-                $('#title').text(add_phone);
                 $('#addUsermyModal').modal();
             })
             $('.submit').on('click',function(){
@@ -145,7 +129,7 @@
                 var id = $('.bing_id').val();
                 $.ajax({
                     type : 'post',
-                    url : "{:url('User/tel_add')}",
+                    url : "{:url('Channel/tel_add')}",
                     data : {id:id,account:account,channel_id:channel_id,password:password,enable:enable},
                     success:function(data){
                         if(data.status == 1){
@@ -162,7 +146,7 @@
                 $('#addUsermyModal').modal();
                 $.ajax({
                     type : 'get',
-                    url : "{:url('User/tel_edit')}?id="+id,
+                    url : "{:url('Channel/tel_edit')}?id="+id,
                     success:function(data){
                         $('.account').val(data.account);
                         $('.password').val(data.password);
@@ -176,8 +160,25 @@
             }
             function tel_del(id){
                 if(window.confirm("您确定删除此话机吗？")) {
-                    window.location.href="{:url('User/tel_del')}?id="+id;
+                    window.location.href="{:url('Channel/tel_del')}?id="+id;
                 }
             }
+            $('#call_task').click(function(){
+                var arry = new Array();
+                //循环所有选中的值
+                $('.ids:checked').each(function(index, element) {
+                    //追加到数组中
+                    arry.push($(this).attr('id'));
+                });
+                //将数组元素连接起来转化为字符串
+                var arrystr = arry.join(',');
+                if(arrystr == ''){
+                    toastr.error('empty ids');
+                }else{
+                    if(window.confirm("您确定批量添加到呼叫任务吗？")) {
+                        window.location.href="{:url('Channel/batch_call_task')}?ids="+arrystr;
+                    }
+                }
+            })
         </script>
     {include file="public/footer" /}

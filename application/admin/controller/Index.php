@@ -1,42 +1,39 @@
 <?php
 namespace app\admin\controller;
 use app\Common\Controller\AdminBaseController;
-use think\Db;
 use think\Request;
 use think\File;
 use think\loader;
-use think\facade\Cookie;
-use app\Common\Model\AdminUserModel;
+use app\Common\Model\CallCaseModel;
 use think\facade\App;
+use app\Common\Model\AdminUserModel;
+use app\Common\Model\ChannelUserModel;
+use think\Db;
 class Index extends AdminBaseController
 {   
     protected $adminUser;
     public function __construct() {
         parent::__construct();
+        $this->CallCase = new CallCaseModel();
         $this->adminUser = new AdminUserModel();
+        $this->ChannelUser = new ChannelUserModel();
 	}
-    public function index()
-    {
+    public function index(){
         if($_POST || $_GET){
-            $table = DB::table('tp_execl');
             $info = $this->get_paging_info();
             if(count($info)){
                 $length = $info['page_length'];
                 $start = $info['page_start'];
-                if(!empty(input('search'))){
-                    $list = $table->whereOr([['user_name','like',"%".input('search')."%"]])->whereOr([['email','like',"%".input('search')."%"]])->limit($start,$length)->select();
-                }else{
-                    $list = $table->limit($start,$length)->select();
-                }
+                $list = $this->CallCase->field('id,task_id,phone,extend_id,case_message,add_time')->where([['extend_id','like',"%".input('search')."%"]])->limit($start,$length)->select();
+                
                 $list = $this->object_array($list);
                 foreach ($list as $k=>$v){
-                    $button = '';
-                    $button .= "<button type='button' class='btn btn-default btn-md' data-toggle='modal' data-target='#editRoleModal'>修改</button>";
-                    $button .= "<a class='btn btn-info btn-delete' data-id=".$v['id'].">删除</a>";
-                    $list[$k][] = $button;
+                    $find =  Db::table('sys_call_case_task')->field('id,name')->where('id',$v['task_id'])->find();
+                    $list[$k]['task_id'] = $find['name'];
+                    $list[$k]['id'] = '<input type="checkbox" class="ids" id="'.$v['id'].'">';
+                    $list[$k][] = $this->bt_onclick('call_del',$v['id'],lang('delete'));
                 }
-//                $this->assign('list',$list);
-                $count = $table->count();
+                $count = $this->CallCase->count();
                 $data =  $this->show_paging_info($info['page_echo'],$count,$list);
                 return $data;
             }
@@ -44,26 +41,11 @@ class Index extends AdminBaseController
         $this->assign('search',input('search'));
         return $this->fetch();
     }
-    public function lang(){
-        $lang = input('?get.lang') ? input('get.lang') : 'ZH-CN';
-        switch ($lang) {
-            case 'ZH-CN':
-                cookie('think_var', 'ZH-CN');
-                break;
-            case 'EN':
-                cookie('think_var', 'EN');
-                break;
-            case 'INDO':
-                cookie('think_var', 'INDO');
-                break;
-            default:
-                cookie('think_var', 'ZH-CN');
-        }
-    }
+    
     public function change_password(){
         if(IS_POST){
             $original = md5(trim($_POST['original_password']));
-            $uid = session('admin_uid');
+            $uid = session('channel_uid');
             $condition = ['id'=>$uid];
             $oglFind = $this->adminUser->where($condition)->find();
             $back = [];
@@ -89,7 +71,7 @@ class Index extends AdminBaseController
         }else{
             return json(['status'=>0]);
         }
-    }
+    } 
 
     /**
      *
@@ -110,16 +92,40 @@ class Index extends AdminBaseController
         if($_FILES){
             $file = request()->file('excel');
             $res = leading_in($file);
+            foreach($res as $k=>$v){
+                $res[$k]['add_time'] = date('Y-m-d H:i:s');
+                $res[$k]['channel_id'] = session('admin_uid');
+            }
             if(is_array($res)){
-               $result = DB::table('tp_execl')->insertAll($res);
+               $result = $this->CallCase->insertAll($res);
                if($result){
-                   $this->success('导入成功',url('Index/index'));
+                    $this->redirect('Index/index');
                }else{
                    $this->error('导入失败');
                }
             }
         }
         return $this->fetch();
-
+    }
+    public function call_del(){
+        $del = $this->CallCase->where(['id'=>input('id')])->delete();
+        if($del){
+            $this->redirect('Index/index');
+        }else{
+            $this->error('error');
+        }
+    }
+    public function batch_del(){
+        if(input('ids')){
+            $ids = explode(',',input('ids'));
+            $del = $this->CallCase->where(['id'=>$ids])->delete();
+            if($del){
+                $this->redirect('Index/index');
+            }else{
+                $this->error('error');
+            }
+        }else{
+            $this->error('empty ids');
+        }
     }
 }

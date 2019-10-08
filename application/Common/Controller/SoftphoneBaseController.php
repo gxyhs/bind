@@ -6,7 +6,7 @@ use think\Lang;
 use app\Common\Model\CommonModel;
 use think\Exception;
 
-class AdminBaseController extends BaseController {
+class SoftphoneBaseController extends BaseController {
 
     public function __construct($checkLogin = True) {
         parent::__construct();
@@ -28,9 +28,9 @@ class AdminBaseController extends BaseController {
     }
 
     protected function isLogin() {
-        $admin_uid = session('admin_uid');
+        $admin_uid = session('soft_uid');
         if (empty($admin_uid)) {
-            $url = url('Admin/index');
+            $url = url('Soft/index');
             $this->redirect($url);
             exit;
         }

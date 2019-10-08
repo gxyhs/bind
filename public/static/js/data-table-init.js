@@ -45,21 +45,27 @@ function init_DataTables() {
 
     function retrieveData(url, aoData, fnCallback) {
         $.ajax({
-            url: url,//这个就是请求地址对应sAjaxSource
+            url : url,//这个就是请求地址对应sAjaxSource
             data : {
                 "aoData":JSON.stringify(aoData)
             },
             type: 'POST',
             dataType: 'json',
             async: true,
-            success: function (result) {
-                $('.check-all').attr("checked", false);
-                fnCallback(result);//把返回的数据传给这个方法就可以了,datatable会自动绑定数据的
-            },
-            error:function(XMLHttpRequest, textStatus, errorThrown) {
-                alert("status:"+XMLHttpRequest.status+",readyState:"+XMLHttpRequest.readyState+",textStatus:"+textStatus);
+            // success: function (result) {
+            //     $('.check-all').attr("checked", false);
+            //     fnCallback(result);//把返回的数据传给这个方法就可以了,datatable会自动绑定数据的
+            // },
+            // error:function(XMLHttpRequest, textStatus, errorThrown) {
+            //     alert("status:"+XMLHttpRequest.status+",readyState:"+XMLHttpRequest.readyState+",textStatus:"+textStatus);
 
-            }
+            // }
+        }).done(function (result) {
+            $('.check-all').attr("checked", false);
+            fnCallback(result);//把返回的数据传给这个方法就可以了,datatable会自动绑定数据的
+        }).fail(function (jqXHR, textStatus, errorThrown) {
+            // net::ERR_CONNECTION_REFUSED 发生时，也能进入
+            console.info("网络出错");
         });
     }
 
@@ -247,7 +253,19 @@ $(function() {
         }
     });
 });
+function init_detail(){
+    $('.level').hide();
+    $('.coe').hide();
+    $('.confirm').on('click',function(){
+        var text = $(this).attr('confirm-text');
+        if(confirm(text)==false)return false;
+    });
+    $(".check-all").click(function(){
+        $(".ids").prop("checked", this.checked);
+    });
+}
 $(document).ready(function() {
     init_DataTables();
     init_validator ();
+    init_detail();
 })

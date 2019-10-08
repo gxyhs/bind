@@ -1,0 +1,132 @@
+
+            {include file="public/header" /}
+            <style>
+                .form-control{width: 40%}
+            </style>
+            <!--body wrapper start-->
+            <div class="wrapper">
+                
+                <div class="row">
+                    <form method="post" action="{:url('Channel/add_call_case_softphone_ajax',['id'=>$id])}" enctype="multipart/form-data" role="form"  id="form">    
+                    <div class="col-sm-12" style="margin-left: 150px;">
+                            {if empty($id)}
+                            <div class="form-group">
+                                <label for="name">{:lang('name_task')}</label>
+                                <input type="text" class="form-control" name="name" placeholder="{:lang('name_task')}">
+                            </div>
+                            {/if}
+                            <div class="form-group">
+                                <label for="name">{:lang('the_unit')}</label>
+                                <div>
+                                    <input type="text" readonly="readonly" name="call_soft" value="{$accounts}" style="float: left;" id="call_soft" class="form-control"  placeholder="{:lang('the_unit')}">
+                                    <a type="text" id="addCallModal" class="btn btn-default" >{:lang('the_unit')}</a>
+                                </div>
+                            </div>
+                            {if empty($id)}
+                            <div class="form-group">
+                                <label for="inputfile">{:lang('upload_call_case')}</label>
+                                <input type="file" name="excel" id="inputfile">
+                                <!-- <p class="help-block">这里是块级帮助文本的实例。</p> -->
+                            </div>
+                            {/if}
+                            <div class="form-group">
+                                <label for="name">{:lang('call_multiple')}</label>
+                                <input type="text" class="form-control" name="call_multiple" value="{$find.call_multiple}" placeholder="{:lang('call_multiple')}">
+                            </div>
+                            <div class="form-group">
+                                <label for="name">{:lang('recall_count')}</label>
+                                <input type="text" class="form-control" name="recall_count" value="{$find.recall_count}" placeholder="{:lang('recall_count')}">
+                            </div>
+                            <button type="submit" class="btn btn-default">{:lang('submit')}</button>
+                    </div>
+                    </form>
+                </div>
+            
+            </div>
+            <!--body wrapper end-->
+            <div class="modal fade" id="addsoftModal">
+                    <div class="modal-dialog" role="document">  
+                        <div class="modal-content">  
+                            <div class="modal-header">  
+                                <button type="button" class="close" data-dismiss="modal" aria-label="Close">  
+                                    <span aria-hidden="true">×</span>  
+                                </button>  
+                                <h4 class="modal-title" id="title">{:lang('add_phone')}</h4>  
+                            </div>  
+                            <div class="modal-body"> 
+                                    {foreach $soft as $vo}
+                                    {$vo.account}：<input class="ids" {if in_array($vo['account'],$checked)}checked{/if} type="checkbox" name="checkbox" value="{$vo.account}"><br>
+                                    {/foreach}
+                                    <button onclick="opcheckboxed('checkbox', 'checkall')">全选</button>
+                                    <button onclick="opcheckboxed('checkbox', 'uncheckall')">取消全选</button>
+                                    <button onclick="opcheckboxed('checkbox', 'reversecheck')">反选</button>
+                            </div>  
+                            <div class="modal-footer">  
+                                <button type="button" class="btn btn-default" data-dismiss="modal">{:lang('cancel')}</button>  
+                                <button type="button" class="btn btn-primary submit_check">{:lang('submit')}</button>  
+                            </div>  
+                        </div>  
+                    </div>  
+                </div>
+        </div>
+        <!-- body content end-->
+        
+    </section>
+    <script>
+        $('#addCallModal').on('click', function () {
+            $('#addsoftModal').modal();
+        })
+        function opcheckboxed(objName, type){
+            var objNameList=document.getElementsByName(objName);
+            if(null!=objNameList){
+                for(var i=0;i<objNameList.length;i++){  
+                    if(objNameList[i].checked==true)
+                    {
+                        if(type != 'checkall') {  // 非全选
+                        objNameList[i].checked=false;
+                        }
+                        
+                    } else {
+                        if(type != 'uncheckall') {  // 非取消全选
+                        objNameList[i].checked=true;
+                        }
+                    }
+                }  
+            }
+        }
+        $(".submit_check").click(function(){
+            var arry = new Array();
+            //循环所有选中的值
+            $('.ids:checked').each(function(index, element) {
+                //追加到数组中
+                arry.push($(this).val());
+            });
+            
+            var arrystr = arry.join(',');
+            $('#call_soft').val(arrystr);
+            $('#addsoftModal').modal('hide')
+        })
+        // $('#submit_task').click(function(){
+        //     var name = $('#name').val();
+        //     var call_soft = $('#call_soft').val();
+        //     var call_multiple = $('#call_multiple').val();
+        //     var recall_count = $('#recall_count').val();
+        //     // var file = $('#inputfile').val();
+        //     var file = $('#inputfile')[0].files[0];
+        //     var formdata =new FormData($('#inputfile')[0]);
+        //     $.ajax({
+        //         type : 'post',
+        //         url : "{:url('Channel/add_call_case_softphone_ajax')}",
+        //         processData: false,  // 不要处理发送的数据
+        //         contentType: false,   // 不要设置Content-Type请求头
+        //         data : {name:name,call_soft:call_soft,call_multiple:call_multiple,recall_count:recall_count,file:file},
+        //         dataType:'json',
+        //         success:function(data){
+        //             alert(1)
+        //         }
+        //     })
+        // })
+    </script>
+    {include file="public/footer" /}
+    
+    

@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="Admin Template">
+    <meta name="keywords" content="admin dashboard, admin, flat, flat ui, ui kit, app, web app, responsive">
+    <link rel="shortcut icon" href="/static/img/ico/favicon.png">
+    <title>User</title>
+
+    <!-- Base Styles -->
+    <link href="/static/css/style.css" rel="stylesheet">
+    <link href="/static/css/style-responsive.css" rel="stylesheet">
+    <!-- HTML5 shim and Respond.js IE8 support of HTML5 elements and media queries -->
+    <!--[if lt IE 9]>
+    <script src="/static/js/html5shiv.min.js"></script>
+    <script src="/static/js/respond.min.js"></script>
+    <![endif]-->
+
+
+</head>
+
+  <body class="login-body">
+
+      <div class="login-logo">
+          <img src="/static/img/login_logo.png" alt=""/>
+      </div>
+
+      <h2 class="form-heading">login</h2>
+      <div class="container log-row">
+          <form class="form-signin" action="{:url('Login/login')}" method="post">
+              <div class="login-wrap">
+                  <input type="text" class="form-control" placeholder="User ID" name="account" autofocus>
+                  <input type="password" class="form-control" placeholder="Password" name="password">
+                  <div>
+                    <input class="captcha" type="text" class="form-control" placeholder="Verification Code" name="captcha">
+                    <img width="140px;" onclick="changeCode(this)" src="{:url('Login/verify')}" alt="captcha" />
+                  </div>
+                  <button class="btn btn-lg btn-success btn-block" type="submit">LOGIN</button>
+                  
+                  
+
+                  <!-- <div class="registration">
+                      Don't have an account yet?
+                      <a class="" href="{:url('Regist/index')}">
+                          Create an account
+                      </a>
+                  </div> -->
+
+              </div>
+          </form>
+      </div>
+
+
+      <!--jquery-1.10.2.min-->
+      <script src="/static/js/jquery-1.11.1.min.js"></script>
+      <!--Bootstrap Js-->
+      <script src="/static/js/bootstrap.min.js"></script>
+      <script src="/static/js/jrespond..min.js"></script>
+
+  </body>
+</html>
+<script>
+    // 点击验证码刷新图片
+    function changeCode(obj)
+    {
+        var url = "{:url('Login/verify',['random'=>"+Math.random+"])}";  //兼容低版本的浏览器
+        obj.src = url;
+    }
+</script>

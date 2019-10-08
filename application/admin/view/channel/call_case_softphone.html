@@ -1,0 +1,94 @@
+
+            {include file="public/header" /}
+            <!--body wrapper start-->
+            <div class="wrapper">
+
+                <div class="row">
+                        
+                    <div class="col-sm-12">
+                        
+                        <section class="panel">
+                            <div class="x_title panel-heading">
+                                <div class="" style="overflow: auto">
+                                    
+                                        <form class="form-inline form-search" role="form" method="get" style="float:left">
+                                            
+                                            <div class="form-group">
+                                                <label for="">Search:</label>
+                                                <input type="text" name="search" placeholder="account"" value="{$search}">
+                                            </div>
+                                            <button type="submit" class="btn btn-default">submit</button>
+                                            <button type="reset" class="btn btn-default">clear</button>
+                                        </form>
+                                        <a href="{:url('Channel/add_call_case_softphone')}" style="float: right;" class="btn btn-default">{:lang('new_task')}</a>
+                                </div>
+                            </div>
+                            <!-- <header class="panel-heading ">
+                                Convertable Data Table
+                                <span class="tools pull-right">
+                                    <a class="fa fa-repeat box-refresh" href="javascript:;"></a>
+                                    <a class="t-close fa fa-times" href="javascript:;"></a>
+                                </span>
+                            </header> -->
+                        <table class="table datatable-ajax data-table">
+                        <thead>
+                        <tr>
+                            <th>
+                               id
+                            </th>
+                            <th>
+                                {:lang('name_task')}
+                            </th>
+                            <th>
+                                {:lang('softphone_count')}
+                            </th>
+                            <th>
+                                {:lang('call_case_count')}
+                            </th>
+                            <th>
+                                {:lang('call_multiple')}
+                            </th>
+                            <th>
+                                {:lang('recall_count')}
+                            </th>
+                            <th>
+                                {:lang('status')}
+                            </th>
+                            
+                            <th>
+                                addtime
+                            </th>
+                            <th>
+                                {:lang('operating')}
+                            </th>
+                            
+                        </tr>
+                        </thead>
+                        <tbody>
+                           
+                        </tbody>
+                        </table>
+                        </section>
+                    </div>
+
+                </div>
+                
+
+            </div>
+            <!--body wrapper end-->
+        </div>
+        <!-- body content end-->
+    </section>
+    <script>
+        function task_del(id){
+            if(window.confirm("您确定删除此任务吗？")) {
+                window.location.href="{:url('Channel/task_del')}?id="+id;
+            }
+        }
+        function start(id){
+            if(window.confirm("您确定执行此操作吗？")) {
+                window.location.href="{:url('Channel/task_start')}?id="+id;
+            }
+        }
+    </script>
+    {include file="public/footer" /}

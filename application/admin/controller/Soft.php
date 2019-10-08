@@ -3,17 +3,17 @@ namespace app\admin\controller;
 use think\Controller;
 use think\Validate;
 use think\captcha\Captcha;
-use app\Common\Model\ChannelUserModel;
+use app\Common\Model\SoftphoneModel;
 
 /**
  * 渠道用户登录
  * @author yhs 2019.09.20
  */
-class Login extends Controller
+class Soft extends Controller
 {   
-    public function user()
+    public function index()
     {   
-        return $this->fetch('login:user');
+        return $this->fetch();
     }
 
     public function login()
@@ -25,25 +25,25 @@ class Login extends Controller
             'account' => 'require',
             'password' => 'require',
         ]);
-            
+
         if(!$validate->check($data)){
             $this->error($validate->getError());
         }
         $captcha = new Captcha();
-        if( empty($data['captcha']) || !$captcha->check($data['captcha'])){
+        if(empty($data['captcha']) ||  !$captcha->check($data['captcha'])){
             $this->error('验证码有误！');
         }
-        $model = new ChannelUserModel();
+        $model = new SoftphoneModel();
         $condition = ['account'=>$data['account']];
         $res = $model->where($condition)->find();
         if(empty($res)){
             $this->error('找不到账号');
         }
-        if($res['password'] == md5($data['password'])){
-            session('channel_uid',$res['id']);
+        if($res['password'] == $data['password']){
+            session('soft_uid',$res['id']);
             session('account',$res['account']);
-            session('is_login',2);
-            $this->redirect('Channel/index');
+            session('is_login',3);
+            $this->redirect('Softphone/index');
         }else{
             $this->error('密码错误');
         }
@@ -54,8 +54,8 @@ class Login extends Controller
     }
     public function logout() {
         session('is_login',NUll);
-        session('channel_uid',NUll);
-        $url = url("Login/user");
+        session('soft_uid',NUll);
+        $url = url("Soft/index");
         $this->redirect($url);
     }
 }

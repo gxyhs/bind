@@ -3,17 +3,18 @@ namespace app\admin\controller;
 use think\Controller;
 use think\Validate;
 use think\captcha\Captcha;
-use app\Common\Model\ChannelUserModel;
+use app\Common\Model\AdminUserModel;
+use think\facade\Cookie;
 
 /**
- * 渠道用户登录
- * @author yhs 2019.09.20
+ * 管理员登录
+ * @author yhs 2019.09.10
  */
-class Login extends Controller
+class Admin extends Controller
 {   
-    public function user()
+    public function index()
     {   
-        return $this->fetch('login:user');
+        return $this->fetch('admin:index');
     }
 
     public function login()
@@ -25,25 +26,25 @@ class Login extends Controller
             'account' => 'require',
             'password' => 'require',
         ]);
-            
+
         if(!$validate->check($data)){
             $this->error($validate->getError());
         }
         $captcha = new Captcha();
-        if( empty($data['captcha']) || !$captcha->check($data['captcha'])){
+        if(empty($data['captcha']) ||  !$captcha->check($data['captcha'])){
             $this->error('验证码有误！');
         }
-        $model = new ChannelUserModel();
+        $model = new AdminUserModel();
         $condition = ['account'=>$data['account']];
-        $res = $model->where($condition)->find();
+        $res = $model->get_admin_info($condition);
         if(empty($res)){
             $this->error('找不到账号');
         }
         if($res['password'] == md5($data['password'])){
-            session('channel_uid',$res['id']);
+            session('admin_uid',$res['id']);
             session('account',$res['account']);
-            session('is_login',2);
-            $this->redirect('Channel/index');
+            session('is_login',1);
+            $this->redirect('index/index');
         }else{
             $this->error('密码错误');
         }
@@ -54,8 +55,24 @@ class Login extends Controller
     }
     public function logout() {
         session('is_login',NUll);
-        session('channel_uid',NUll);
-        $url = url("Login/user");
+        session('admin_uid',NULL);
+        $url = url("Admin/index");
         $this->redirect($url);
+    }
+    public function lang(){
+        $lang = input('?get.lang') ? input('get.lang') : 'ZH-CN';
+        switch ($lang) {
+            case 'ZH-CN':
+                cookie('think_var', 'ZH-CN');
+                break;
+            case 'EN':
+                cookie('think_var', 'EN');
+                break;
+            case 'INDO':
+                cookie('think_var', 'INDO');
+                break;
+            default:
+                cookie('think_var', 'ZH-CN');
+        }
     }
 }

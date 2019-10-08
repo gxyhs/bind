@@ -5,25 +5,24 @@
  */
 namespace app\admin\controller;
 use app\Common\Controller\AdminBaseController;
-use app\Common\Model\AdminUserModel;
+use app\Common\Model\CallCaseModel;
 class Upload extends AdminBaseController
 {   
+    public function __construct() {
+        parent::__construct();
+        $this->CallCase = new CallCaseModel();
+	}
     public function list()
     {   
         if($_POST || $_GET){
-            $table = new AdminUserModel();
             $info = $this->get_paging_info();
             if(count($info)){
                 $length = $info['page_length'];
                 $start = $info['page_start'];
-                if(!empty(input('search'))){
-                    $list = $table->field('id,user_name,email,create_time')->whereOr([['user_name','like',"%".input('search')."%"]])->whereOr([['email','like',"%".input('search')."%"]])->limit($start,$length)->select();
-                }else{
-                    $list = $table->field('id,user_name,email,create_time')->limit($start,$length)->select();
-                }
+                $list = $this->CallCase ->field('id,case_message,create_time')->where([['case_message','like',"%".input('search')."%"]])->limit($start,$length)->select();
                 $list = $this->object_array($list);
-                $this->assign('list',$list);
-                $count = $table->count();
+                
+                $count = $this->CallCase ->count();
                 $data =  $this->show_paging_info($info['page_echo'],$count,$list);
                 return $data;
             }
@@ -31,5 +30,33 @@ class Upload extends AdminBaseController
         $this->assign('search',input('search'));
         return $this->fetch();
     }
-   
+    public function call_add(){
+        if(empty(input('phone')) || empty(input('desc'))){
+            $back['message'] = "Memiliki opsi yang tidak terisi";
+            $back['status'] = 0;
+            return json($back);
+        }
+        $data = [
+            'phone' => input('phone'),
+            'desc' => input('desc'),
+            'create_time' => time(),
+        ];
+        try{
+            $this->CallCase->insert($data);
+            $back['message'] = "success";
+            $back['status'] = 1;
+        }catch(Exception $e){
+            $back['message'] = $e->getMessage();
+            $back['status'] = 0;
+        }
+        return json($back);
+    }
+    public function call_del(){
+        $del = $this->CallCase->where(['id'=>input('id')])->delete();
+        if($del){
+            $this->redirect('Upload/list');
+        }else{
+            $this->success('success');
+        }
+    }
 }
