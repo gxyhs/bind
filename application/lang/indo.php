@@ -58,6 +58,7 @@ return [
     'start' => 'Klik mulai',
     'stop' => 'Klik',
     'start_again' => 'Mulai dari awal',
+    'completion_degree' => '完成度',
 ];
 
 ?>

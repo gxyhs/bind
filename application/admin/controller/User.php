@@ -37,7 +37,7 @@ class User extends AdminBaseController
                 foreach($list as $k=>$v){
                     $list[$k]['operating'] = $this->bt_onclick('user_edit',$v['id'],lang('edit')).$this->bt_onclick('user_del',$v['id'],lang('delete'));
                 }//print_r($list);die;
-                $count = $this->channelUser->count();
+                $count = count($list);
                 $data =  $this->show_paging_info($info['page_echo'],$count,$list);
                 return $data;
             }

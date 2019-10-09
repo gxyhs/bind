@@ -45,7 +45,7 @@ class Channel extends ChannelBaseController
                     $list[$k]['id'] = '<input type="checkbox" class="ids" id="'.$v['id'].'">';
                     $list[$k][] = $this->bt_onclick('call_del',$v['id'],lang('delete'));
                 }
-                $count = $this->CallCase->count();
+                $count = count($list);
                 $data =  $this->show_paging_info($info['page_echo'],$count,$list);
                 return $data;
             }
@@ -141,15 +141,14 @@ class Channel extends ChannelBaseController
                 
                 $condition['channel_id'] = session('channel_uid');
                 $list = $this->softphone->field('id,account,password,status,enable,add_time')->where($condition)->where([['account','like',"%".input('search')."%"]])->limit($start,$length)->select();
-                
+                // print_r($this->softphone->getLastSql());die;
                 $list = $this->object_array($list);
                 foreach($list as $k=>$v){
                     $list[$k]['id'] = '<input type="checkbox" class="ids" id="'.$v['id'].'">';
                     $list[$k]['status'] = $this->status[$v['status']];
                     $list[$k]['enable'] = $v['enable'] == 1 ? lang('yes') : lang('no');
-                    
                 }
-                $count = $this->softphone->count();
+                $count = count($list);
                 $data =  $this->show_paging_info($info['page_echo'],$count,$list);
                 return $data;
             }
@@ -225,11 +224,12 @@ class Channel extends ChannelBaseController
                 $start = $info['page_start'];
                 $condition = array();
                 $condition['channel_id'] = session('channel_uid');
-                $list = Db::table('sys_call_case_task')->field('id,name,softphone_count,call_case_count,call_multiple,recall_count,status,add_time')->where($condition)->where([['name','like',"%".input('search')."%"]])->limit($start,$length)->order('add_time desc')->select();
+                $list = Db::table('sys_call_case_task')->field('id,name,softphone_count,call_case_count,call_multiple,recall_count,completion,status,add_time')->where($condition)->where([['name','like',"%".input('search')."%"]])->limit($start,$length)->order('add_time desc')->select();
                 
                 $list = $this->object_array($list);
                 foreach($list as $k=>$v){
                     $list[$k]['status'] = $this->status[$v['status']];
+                    $list[$k]['completion'] = $v['completion']==0 ? 0 :($v['completion']*100).'%';
                     if($v['status'] == 1){
                         $str = $this->bt_onclick('start',$v['id'],lang('stop'));
                     }elseif($v['status'] == 0){
@@ -240,7 +240,7 @@ class Channel extends ChannelBaseController
                     $url = url('Channel/edit_call_case_softphone',['id'=>$v['id']]);
                     $list[$k][] = $str.$this->operating($url,lang('edit')).$this->bt_onclick('task_del',$v['id'],lang('delete'));
                 }
-                $count = $this->softphone->count();
+                $count = count($list);
                 $data =  $this->show_paging_info($info['page_echo'],$count,$list);
                 return $data;
             }

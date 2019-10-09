@@ -57,6 +57,7 @@ return [
     'start' => '点击开始',
     'stop' => '点击暂停',
     'start_again' => '重新开始',
+    'completion_degree' => '完成度',
     
     
 ];

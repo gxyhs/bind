@@ -22,7 +22,7 @@ class Upload extends AdminBaseController
                 $list = $this->CallCase ->field('id,case_message,create_time')->where([['case_message','like',"%".input('search')."%"]])->limit($start,$length)->select();
                 $list = $this->object_array($list);
                 
-                $count = $this->CallCase ->count();
+                $count = count($list);
                 $data =  $this->show_paging_info($info['page_echo'],$count,$list);
                 return $data;
             }
