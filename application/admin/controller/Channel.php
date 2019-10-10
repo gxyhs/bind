@@ -29,6 +29,10 @@ class Channel extends ChannelBaseController
             lang('in_the_call'),
             lang('talking'),
         ];
+        $this->call_status = [
+            0=>'未呼叫',
+            2=>'呼叫完成',
+        ];
 	}
     public function index(){
         if($_POST || $_GET){
@@ -36,12 +40,12 @@ class Channel extends ChannelBaseController
             if(count($info)){
                 $length = $info['page_length'];
                 $start = $info['page_start'];
-                $list = $this->CallCase->field('id,task_id,phone,extend_id,case_message,add_time')->where('channel_id',session('channel_uid'))->where([['extend_id','like',"%".input('search')."%"]])->limit($start,$length)->order('add_time desc')->select();
-                
+                $list = $this->CallCase->field('id,task_id,phone,extend_id,case_message,status,call_duration,call_count,call_time,add_time')->where('channel_id',session('channel_uid'))->where([['extend_id','like',"%".input('search')."%"]])->limit($start,$length)->order('add_time desc')->select();
                 $list = $this->object_array($list);
                 foreach ($list as $k=>$v){
                     $find =  Db::table('sys_call_case_task')->field('id,name')->where('id',$v['task_id'])->find();
                     $list[$k]['task_id'] = $find['name'];
+                    $list[$k]['status'] = $this->call_status[$v['status']];
                     $list[$k]['id'] = '<input type="checkbox" class="ids" id="'.$v['id'].'">';
                     $list[$k][] = $this->bt_onclick('call_del',$v['id'],lang('delete'));
                 }
