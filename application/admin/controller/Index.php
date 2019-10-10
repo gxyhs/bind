@@ -33,7 +33,7 @@ class Index extends AdminBaseController
                     $list[$k]['id'] = '<input type="checkbox" class="ids" id="'.$v['id'].'">';
                     $list[$k][] = $this->bt_onclick('call_del',$v['id'],lang('delete'));
                 }
-                $count = count($list);
+                $count = $this->CallCase->where([['extend_id','like',"%".input('search')."%"]])->count();
                 $data =  $this->show_paging_info($info['page_echo'],$count,$list);
                 return $data;
             }
