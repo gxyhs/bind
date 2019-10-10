@@ -233,7 +233,7 @@ class Channel extends ChannelBaseController
                 $list = $this->object_array($list);
                 foreach($list as $k=>$v){
                     $list[$k]['status'] = $this->status[$v['status']];
-                    $list[$k]['completion'] = $v['completion']==0 ? 0 :($v['completion']*100).'%';
+                    $list[$k]['completion'] = $v['completion']==0 ? 0 :($v['completion']).'%';
                     if($v['status'] == 1){
                         $str = $this->bt_onclick('start',$v['id'],lang('stop'));
                     }elseif($v['status'] == 0){
