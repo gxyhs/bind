@@ -45,7 +45,7 @@ class Channel extends ChannelBaseController
                     $list[$k]['id'] = '<input type="checkbox" class="ids" id="'.$v['id'].'">';
                     $list[$k][] = $this->bt_onclick('call_del',$v['id'],lang('delete'));
                 }
-                $count = count($list);
+                $count = $this->CallCase->where('channel_id',session('channel_uid'))->where([['extend_id','like',"%".input('search')."%"]])->order('add_time desc')->count();
                 $data =  $this->show_paging_info($info['page_echo'],$count,$list);
                 return $data;
             }
@@ -148,7 +148,7 @@ class Channel extends ChannelBaseController
                     $list[$k]['status'] = $this->status[$v['status']];
                     $list[$k]['enable'] = $v['enable'] == 1 ? lang('yes') : lang('no');
                 }
-                $count = count($list);
+                $count =  $this->softphone->where($condition)->where([['account','like',"%".input('search')."%"]])->count();
                 $data =  $this->show_paging_info($info['page_echo'],$count,$list);
                 return $data;
             }
@@ -240,7 +240,7 @@ class Channel extends ChannelBaseController
                     $url = url('Channel/edit_call_case_softphone',['id'=>$v['id']]);
                     $list[$k][] = $str.$this->operating($url,lang('edit')).$this->bt_onclick('task_del',$v['id'],lang('delete'));
                 }
-                $count = count($list);
+                $count = Db::table('sys_call_case_task')->where($condition)->where([['name','like',"%".input('search')."%"]])->count();;
                 $data =  $this->show_paging_info($info['page_echo'],$count,$list);
                 return $data;
             }
@@ -368,17 +368,17 @@ class Channel extends ChannelBaseController
     //导入excel
     public function excel($file,$id){
         $res = leading_in($file);
-	$data = [];
+	    $data = [];
         foreach($res as $k=>$v){
             if(!empty($v['phone'])){
                // $this->error('empty phone',url('channel/add_call_case_softphone'));
-            $data[$k]['extend_id'] = $v['extend_id'];
-	    $data[$k]['case_message']= $v['case_message'];
-            $data[$k]['channel_id'] = session('channel_uid');
-            $data[$k]['add_time'] = date('Y-m-d H:i:s');
-            $data[$k]['task_id'] = $id;
-	   $data[$k]['phone'] = $v['phone'];
-	    }
+                $data[$k]['extend_id'] = $v['extend_id'];
+                $data[$k]['case_message']= $v['case_message'];
+                $data[$k]['channel_id'] = session('channel_uid');
+                $data[$k]['add_time'] = date('Y-m-d H:i:s');
+                $data[$k]['task_id'] = $id;
+                $data[$k]['phone'] = $v['phone'];
+            }
         }//print_r($data);die;
         $result = $this->CallCase->insertAll($data);
         return count($data);
