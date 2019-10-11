@@ -26,7 +26,7 @@ class Manage extends AdminBaseController
                 foreach($list as $k=>$v){
                     $list[$k]['operating'] = $this->bt_onclick('user_edit',$v['id'],lang('edit')).$this->bt_onclick('user_del',$v['id'],lang('delete'));
                 }//print_r($list);die;
-                $count = count($list);
+                $count = $this->adminUser->where([['account','like',"%".input('search')."%"]])->count();
                 $data =  $this->show_paging_info($info['page_echo'],$count,$list);
                 return $data;
             }

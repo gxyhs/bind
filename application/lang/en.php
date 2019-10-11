@@ -58,9 +58,9 @@ return [
     'start' => 'Click on the start',
     'stop' => 'Click on the pause',
     'start_again' => 'Start all over again',
-    'completion_degree' => 'selesai',
     'no_call' => 'No call',
     'call_completion' => 'Call completion',
+    'completion_degree' => 'Completion Degree',
 ];
 
 ?>
