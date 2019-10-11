@@ -68,9 +68,6 @@
                                 {:lang('call_case_count')}
                             </th>
                             <th>
-                                {:lang('last_call_time')}
-                            </th>
-                            <th>
                                 addtime
                             </th>
                             <th>
@@ -98,25 +95,27 @@
 </section>
 {include file="public/footer" /}
 <script>
-    function call_del(id){
+    function call_del(id,task_id){
         if(window.confirm("您确定删除此记录吗？")) {
-            window.location.href="{:url('Channel/call_del')}?id="+id;
+            window.location.href="{:url('Channel/call_del')}?id="+id+'&task_id='+task_id;
         }
     }
     $('#batch_del').click(function(){
         if(window.confirm("您确定批量删除记录吗？")) {
             var arry = new Array();
+            var task_ids = [];
             //循环所有选中的值
             $('.ids:checked').each(function(index, element) {
                 //追加到数组中
                 arry.push($(this).attr('id'));
+                task_ids.push($(this).attr('task_id'));
             });
             //将数组元素连接起来转化为字符串
             var arrystr = arry.join(',');
             if(arrystr == ''){
                 toastr.error('empty ids');
             }
-            window.location.href="{:url('Channel/batch_del')}?ids="+arrystr;
+            window.location.href="{:url('Channel/batch_del')}?ids="+arrystr+'&task_ids='+task_ids;
         }
     })
 </script>

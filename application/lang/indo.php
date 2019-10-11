@@ -40,7 +40,7 @@ return [
     'yes' => 'Ya',
     'no' => 'Tidak',
 
-    'offline' => 'Dimulai?',
+    'offline' => 'Belum dimulai',
     'online' => 'Sudah mulai',
     'in_the_call' => 'Berhenti sejenak dalam',
     'talking' => 'Saya sudah berakhir',
@@ -55,10 +55,15 @@ return [
     'recall_count' => 'Sering terlahir kembali.',
     'softphone_count' => 'Jumlah membantu seorang saudari',
     'call_case_count' => 'Jumlah panggilan',
+    'call_case_time' =>'Durasi panggilan',
+    'call_status' => 'Status panggilan',
+    'last_call_time' => 'Panggilan terakhir',
     'start' => 'Klik mulai',
     'stop' => 'Klik',
     'start_again' => 'Mulai dari awal',
-    'completion_degree' => '完成度',
+    'completion_degree' => 'Penyelesaian',
+    'no_call' => 'Tidak dipanggil',
+    'call_completion' => 'Panggilan selesai',
 ];
 
 ?>

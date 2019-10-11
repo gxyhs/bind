@@ -30,8 +30,8 @@ class Channel extends ChannelBaseController
             lang('talking'),
         ];
         $this->call_status = [
-            0=>'未呼叫',
-            2=>'呼叫完成',
+            0=>lang('no_call'),
+            2=>lang('call_completion'),
         ];
 	}
     public function index(){
@@ -40,14 +40,15 @@ class Channel extends ChannelBaseController
             if(count($info)){
                 $length = $info['page_length'];
                 $start = $info['page_start'];
-                $list = $this->CallCase->field('id,task_id,phone,extend_id,case_message,status,call_duration,call_count,call_time,add_time')->where('channel_id',session('channel_uid'))->where([['extend_id','like',"%".input('search')."%"]])->limit($start,$length)->order('add_time desc')->select();
+                $list = $this->CallCase->field('id,task_id,phone,extend_id,case_message,status,call_duration,call_count,add_time')->where('channel_id',session('channel_uid'))->where([['extend_id','like',"%".input('search')."%"]])->limit($start,$length)->order('add_time desc')->select();
                 $list = $this->object_array($list);
                 foreach ($list as $k=>$v){
                     $find =  Db::table('sys_call_case_task')->field('id,name')->where('id',$v['task_id'])->find();
                     $list[$k]['task_id'] = $find['name'];
                     $list[$k]['status'] = $this->call_status[$v['status']];
-                    $list[$k]['id'] = '<input type="checkbox" class="ids" id="'.$v['id'].'">';
-                    $list[$k][] = $this->bt_onclick('call_del',$v['id'],lang('delete'));
+                    $list[$k]['id'] = '<input type="checkbox" class="ids" id="'.$v['id'].'" task_id="'.$v['task_id'].'">';
+                    $call_param = $v['id'].','.$v['task_id'];
+                    $list[$k][] = $this->bt_onclick('call_del',$call_param,lang('delete'));
                 }
                 $count = count($list);
                 $data =  $this->show_paging_info($info['page_echo'],$count,$list);
@@ -112,6 +113,7 @@ class Channel extends ChannelBaseController
     public function call_del(){
         $del = $this->CallCase->where(['id'=>input('id')])->delete();
         if($del){
+            db('call_case_task')->where(['id'=>input('task_id')])->setDec('call_case_count');
             $this->redirect('Channel/index');
         }else{
             $this->error('success');
@@ -122,6 +124,21 @@ class Channel extends ChannelBaseController
             $ids = explode(',',input('ids'));
             $del = $this->CallCase->where(['id'=>$ids])->delete();
             if($del){
+                //拆分任务id
+                $task_ids = explode(',',input('task_ids'));
+                //得出获取任务id出现的次数
+                $task_ids_new = array_count_values($task_ids);
+                //获取出现的任务id
+                $keys = array_keys($task_ids_new);
+                //拼接成字符串
+                $keys_id = implode(',',$keys);
+                //拼接sql
+                $update_case_count_sql = 'UPDATE sys_call_case_task SET call_case_count=(CASE id';
+                foreach ($task_ids_new as $k=>$v){
+                    $update_case_count_sql .= ' WHEN '.$k.' THEN call_case_count-'.$v;
+                }
+                $update_case_count_sql .= ' END) WHERE id IN('.$keys_id.')';
+                Db::query($update_case_count_sql);
                 $this->redirect('Channel/index');
             }else{
                 $this->error('error');
