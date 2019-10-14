@@ -44,7 +44,7 @@ class Regist extends Controller
             $this->error($validate->getError());
         }
         $model = new AdminUserModel();
-        if($model->where(['user_name'=>$data['user_name']]->find())){
+        if($model->where(['user_name'=>$data['user_name']])->find()){
             $this->error('Nama pengguna sudah ada');
         }
         if($data['password'] != $data['re_password']){

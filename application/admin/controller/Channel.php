@@ -7,6 +7,7 @@ namespace app\admin\controller;
 use app\Common\Controller\ChannelBaseController;
 use app\Common\Model\ChannelUserModel;
 use app\Common\Model\SoftphoneModel;
+use think\console\Input;
 use think\Request;
 use think\File;
 use think\loader;
@@ -152,7 +153,7 @@ class Channel extends ChannelBaseController
      *  @author yhs 2019.09.18
      */
     public function telephone()
-    {   
+    {
         if($_POST || $_GET){
             $info = $this->get_paging_info();
             if(count($info)){
@@ -167,6 +168,7 @@ class Channel extends ChannelBaseController
                 foreach($list as $k=>$v){
                     $list[$k]['id'] = '<input type="checkbox" class="ids" id="'.$v['id'].'">';
                     $list[$k]['status'] = $this->status[$v['status']];
+                    $list[$k]['operating'] = '<a href="javascript:void(0)" onclick="edit_pass('.$v['id'].')" class="btn btn-info btn-xs edit-pass" id="tel_'.$v['id'].'" data-toggle="modal" data-target="#edit_phone_pass">修改密码</a>';
                     $list[$k]['enable'] = $v['enable'] == 1 ? lang('yes') : lang('no');
                 }
                 $count =  $this->softphone->where($condition)->where([['account','like',"%".input('search')."%"]])->count();
@@ -203,6 +205,27 @@ class Channel extends ChannelBaseController
             $back['status'] = 0;
         }
         return json($back);
+    }
+    public function tel_password_edit()
+    {
+        $request = Request();
+        if(!$request->isPost()){
+            return json(['code'=>101,'info'=>'请求错误']);
+        }
+        $tel_id = input('post.tel_id');
+        $tel_password = input('post.tel_password');
+        if(!is_numeric($tel_id) || !is_numeric($tel_password)){
+            return json(['code'=>101,'info'=>'参数错误']);
+        }
+        try{
+            $this->softphone->startTrans();
+            $this->softphone->where(['id'=>$tel_id])->update(['password'=>$tel_password]);
+            $this->softphone->commit();
+            return json(['code'=>200,'info'=>'success']);
+        }catch (\Exception $e){
+            $this->softphone->rollback();
+            return json(['code'=>101,'info'=>$e->getMessage()]);
+        }
     }
     public function tel_edit(){
         if(input('id')){

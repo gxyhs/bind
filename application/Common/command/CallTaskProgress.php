@@ -17,24 +17,22 @@ Class CallTaskProgress extends Command
         try{
             $call_case_task = new CallCaseTaskModel();
             $sql = 'UPDATE sys_call_case_task SET completion=(CASE id';
-            //$call_case_task_data = $call_case_task->where('call_case_count','neq',0)->field('id,call_case_count')->with('getCallCaseTask')->select();
             $where = [
                 ['status','neq',0],
                 ['call_case_count','neq',0],
-                //['completion','neq',100]
+                ['completion','neq',100]
             ];
-
+//            $call_case_task_data = $call_case_task->where($where)->field('id,call_case_count')->with('getCallCaseTask')->select();
             $call_case_task_data = $call_case_task->field('id,call_case_count')->where($where)->select();
-            
+            $CallCase = new CallCaseModel();
             //处理数据
             foreach($call_case_task_data as $k=>$v){
-                $CallCase = new CallCaseModel();
                 $crontab = [
                     'status' => 2,
                     'task_id' => $v['id'],
                 ];
                 $count = $CallCase->where($crontab)->count();
-                $proportion = number_format($count / $v['call_case_count'], 2, '.', '')*100;
+                $proportion = round($count / $v['call_case_count'], 2)*100;
                 $sql .= ' WHEN '.$v['id'].' THEN '.$proportion;
             }
             $sql .= ' END)';
