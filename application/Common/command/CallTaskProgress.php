@@ -23,7 +23,7 @@ Class CallTaskProgress extends Command
                 ['completion','neq',100]
             ];
 //            $call_case_task_data = $call_case_task->where($where)->field('id,call_case_count')->with('getCallCaseTask')->select();
-            $call_case_task_data = $call_case_task->field('id,call_case_count')->where($where)->select();
+            $call_case_task_data = $call_case_task->field('id,call_case_count')->where($where)->select()->toArray();
             $CallCase = new CallCaseModel();
             //处理数据
             foreach($call_case_task_data as $k=>$v){
@@ -36,6 +36,9 @@ Class CallTaskProgress extends Command
                 $sql .= ' WHEN '.$v['id'].' THEN '.$proportion;
             }
             $sql .= ' END)';
+            $call_case_task_id = array_column($call_case_task_data,'id');
+            $call_case_task_ids = implode(',',$call_case_task_id);
+            $sql .= ' WHERE id IN('.trim($call_case_task_ids,',').')';
             Db::query($sql);
             $output->writeln('successfully');
         }catch (\Exception $e){
