@@ -28,16 +28,13 @@ class User extends AdminBaseController
             if(count($info)){
                 $length = $info['page_length'];
                 $start = $info['page_start'];
-                if(!empty(input('search'))){
-                    $list = $this->channelUser->field('id,account,secret_key,secret_token,add_time')->where([['account','like',"%".input('search')."%"]])->whereOr([['email','like',"%".input('search')."%"]])->limit($start,$length)->select();
-                }else{
-                    $list = $this->channelUser->field('id,account,secret_key,secret_token,add_time')->limit($start,$length)->select();
-                }
+                $list = $this->channelUser->field('id,account,secret_key,secret_token,add_time')->where([['account','like',"%".input('search')."%"]])->limit($start,$length)->select();
+               
                 $list = $this->object_array($list);
                 foreach($list as $k=>$v){
                     $list[$k]['operating'] = $this->bt_onclick('user_edit',$v['id'],lang('edit')).$this->bt_onclick('user_del',$v['id'],lang('delete'));
                 }//print_r($list);die;
-                $count = $this->channelUser->where([['account','like',"%".input('search')."%"]])->whereOr([['email','like',"%".input('search')."%"]])->select();
+                $count = $this->channelUser->where([['account','like',"%".input('search')."%"]])->select();
                 $data =  $this->show_paging_info($info['page_echo'],$count,$list);
                 return $data;
             }
