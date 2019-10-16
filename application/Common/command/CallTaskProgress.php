@@ -13,7 +13,7 @@ Class CallTaskProgress extends Command
         $this->setName('CallTaskProgress')->setDescription('计算呼叫案例进度');
     }
     protected  function execute(Input $input, Output $output)
-    {   $this->logPrint(3);
+    {   
         try{
             $call_case_task = new CallCaseTaskModel();
             $sql = 'UPDATE sys_call_case_task SET completion=(CASE id';
@@ -22,9 +22,11 @@ Class CallTaskProgress extends Command
                 ['call_case_count','neq',0],
                 ['completion','neq',100]
             ];
-            //$call_case_task_data = $call_case_task->where($where)->field('id,call_case_count')->with('getCallCaseTask')->select();
-            //$list = $call_case_task->caseList();
-            $call_case_task_data = $call_case_task->field('id,call_case_count')->where($where)->select()->toArray();
+        $call_case_task_data = $call_case_task->field('id,call_case_count')->select()->toArray();
+	    if(empty($call_case_task_data)){
+            $output->writeln('No Data');
+            return false;
+	    }
             $CallCase = new CallCaseModel();
             //处理数据
             foreach($call_case_task_data as $k=>$v){
@@ -40,11 +42,10 @@ Class CallTaskProgress extends Command
             $call_case_task_id = array_column($call_case_task_data,'id');
             $call_case_task_ids = implode(',',$call_case_task_id);
             $sql .= ' WHERE id IN('.trim($call_case_task_ids,',').')';
-            if(!empty($call_case_task_ids)){
-                Db::query($sql);
-            }
+            Db::query($sql);
             $output->writeln('successfully');
         }catch (\Exception $e){
+	    trace($e->getMessage(),'error');
             $output->writeln($e->getMessage());
         }
     }
