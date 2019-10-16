@@ -1,19 +1,16 @@
 <?php
-namespace app\Common\command;
-use think\console\Command;
-use think\console\Input;
-use think\console\Output;
+namespace app\admin\controller;
+use think\Controller;
 use app\Common\Model\CallCaseTaskModel;
 use app\Common\Model\CallCaseModel;
 use think\Db;
-Class CallTaskProgress extends Command
-{
-    protected function configure()
-    {
-        $this->setName('CallTaskProgress')->setDescription('计算呼叫案例进度');
-    }
-    protected  function execute(Input $input, Output $output)
-    {   $this->logPrint(3);
+
+/**
+ * 定时任务
+ * @author yhs 2019.10.15
+ */
+class Crontab extends Controller{
+    public function CallTaskProgress(){
         try{
             $call_case_task = new CallCaseTaskModel();
             $sql = 'UPDATE sys_call_case_task SET completion=(CASE id';
@@ -22,8 +19,6 @@ Class CallTaskProgress extends Command
                 ['call_case_count','neq',0],
                 ['completion','neq',100]
             ];
-            //$call_case_task_data = $call_case_task->where($where)->field('id,call_case_count')->with('getCallCaseTask')->select();
-            //$list = $call_case_task->caseList();
             $call_case_task_data = $call_case_task->field('id,call_case_count')->where($where)->select()->toArray();
             $CallCase = new CallCaseModel();
             //处理数据
@@ -43,13 +38,13 @@ Class CallTaskProgress extends Command
             if(!empty($call_case_task_ids)){
                 Db::query($sql);
             }
-            $output->writeln('successfully');
+            return 'successfully';
         }catch (\Exception $e){
-            $output->writeln($e->getMessage());
+            return $e->getMessage();
         }
     }
     public function logPrint($postObj) {
-        $fp = fopen('/data/api2.txt', 'a+');
+        $fp = fopen('/data/api1.txt', 'a+');
         fwrite($fp, var_export($postObj, true));
         fclose($fp);
     }
