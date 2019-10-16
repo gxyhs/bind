@@ -162,7 +162,7 @@ class Channel extends ChannelBaseController
                 $condition = array();
                 
                 $condition['channel_id'] = session('channel_uid');
-                $list = $this->softphone->field('id,account,password,status,enable,add_time')->where($condition)->where([['account','like',"%".input('search')."%"]])->limit($start,$length)->select();
+                $list = $this->softphone->field('id,account,password,status,enable,add_time')->where($condition)->where([['account','like',"%".input('search')."%"]])->order('account asc')->limit($start,$length)->select();
                 // print_r($this->softphone->getLastSql());die;
                 $list = $this->object_array($list);
                 foreach($list as $k=>$v){
@@ -257,7 +257,7 @@ class Channel extends ChannelBaseController
         }
         $this->redirect('Channel/call_case_softphone');
     }
-    /**
+    /**add_call_case_softphone_ajax
      * 呼叫任务列表
      */
     public function call_case_softphone(){
@@ -268,7 +268,7 @@ class Channel extends ChannelBaseController
                 $start = $info['page_start'];
                 $condition = array();
                 $condition['channel_id'] = session('channel_uid');
-                $list = Db::table('sys_call_case_task')->field('id,name,softphone_count,call_case_count,call_multiple,recall_count,completion,status,add_time')->where($condition)->where([['name','like',"%".input('search')."%"]])->limit($start,$length)->order('add_time desc')->select();
+                $list = Db::table('sys_call_case_task')->field('id,name,softphone_count,call_case_count,call_multiple,completion,status,add_time')->where($condition)->where([['name','like',"%".input('search')."%"]])->limit($start,$length)->order('add_time desc')->select();
                 
                 $list = $this->object_array($list);
                 foreach($list as $k=>$v){
@@ -313,7 +313,7 @@ class Channel extends ChannelBaseController
             $accounts[] = $v['account'];
         }
         //->whereNotIn('account',$accounts)
-        $soft = $this->softphone->field('id,account')->where($where)->select();
+        $soft = $this->softphone->field('id,account')->where($where)->order('account asc')->select();
         $this->assign('soft',$soft);
         return $this->fetch();
     }
@@ -329,14 +329,14 @@ class Channel extends ChannelBaseController
         $where = [
             'channel_id' => session('channel_uid'),
         ];
-        $CallSoftphone = $this->CallSoftphone->where(['task_id'=>$find['id']])->select();
+        $CallSoftphone = $this->CallSoftphone->where(['task_id'=>$find['id']])->order('account asc')->select();
         $accounts = [];
         foreach($CallSoftphone as $k=>$v){
             $accounts[] = $v['account'];
         }
         $this->assign('checked',$accounts);
         $this->assign('accounts',implode(',',$accounts));
-        $soft = $this->softphone->field('id,account')->where($where)->select();
+        $soft = $this->softphone->field('id,account')->where($where)->order('account asc')->select();
         $this->assign('soft',$soft);
         return $this->fetch();
     }
@@ -366,6 +366,10 @@ class Channel extends ChannelBaseController
         $this->redirect('Channel/call_case_softphone');
     }
     public function add_call_case_softphone_ajax(){
+        $file = request()->file();
+        if(!isset($file['excel'])){
+            return $this->error('没有呼叫案列上传');
+        }
         Db::startTrans();
         try{
             // if(empty(input('name'))){
@@ -395,8 +399,7 @@ class Channel extends ChannelBaseController
                 ];
                 $id = Db::table('sys_call_case_task')->insertGetId($data);
                 if($id){
-                    $file = request()->file('excel');
-                    $call_case_count = $this->excel($file,$id);
+                    $call_case_count = $this->excel($file['excel'],$id);
                     //更新呼叫数量
                     Db::table('sys_call_case_task')->where('id',$id)->update(['call_case_count'=>$call_case_count]);
                     $this->add_softphone($call_soft,$id);
