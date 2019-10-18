@@ -39,7 +39,8 @@ return [
     'enable' => 'Apakah terbuka?',
     'yes' => 'Ya',
     'no' => 'Tidak',
-
+    'on_line'=>'Online',
+    'off_line'=>'Offline',
     'offline' => 'Belum dimulai',
     'online' => 'Sudah mulai',
     'in_the_call' => 'Berhenti sejenak dalam',

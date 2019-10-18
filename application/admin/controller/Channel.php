@@ -34,6 +34,10 @@ class Channel extends ChannelBaseController
             0=>lang('no_call'),
             2=>lang('call_completion'),
         ];
+        $this->inline = [
+            lang('on_line'),
+            lang('off_line')
+        ];
 	}
     public function index(){
         if($_POST || $_GET){
@@ -167,7 +171,7 @@ class Channel extends ChannelBaseController
                 $list = $this->object_array($list);
                 foreach($list as $k=>$v){
                     $list[$k]['id'] = '<input type="checkbox" class="ids" id="'.$v['id'].'">';
-                    $list[$k]['status'] = $this->status[$v['status']];
+                    $list[$k]['status'] = $this->inline[$v['status']];
                     $list[$k]['operating'] = '<a href="javascript:void(0)" onclick="edit_pass('.$v['id'].')" class="btn btn-info btn-xs edit-pass" id="tel_'.$v['id'].'" data-toggle="modal" data-target="#edit_phone_pass">修改密码</a>';
                     $list[$k]['enable'] = $v['enable'] == 1 ? lang('yes') : lang('no');
                 }
@@ -278,11 +282,14 @@ class Channel extends ChannelBaseController
                         $str = $this->bt_onclick('start',$v['id'],lang('stop'));
                     }elseif($v['status'] == 0){
                         $str = $this->bt_onclick('start',$v['id'],lang('start'));
-                    }else{
+                    }elseif($v['status'] == 2){
                         $str = $this->bt_onclick('start',$v['id'],lang('start_again'));
+                    }else{
+                        $str = '';
                     }
                     $url = url('Channel/edit_call_case_softphone',['id'=>$v['id']]);
-                    $list[$k][] = $str.$this->operating($url,lang('edit')).$this->bt_onclick('task_del',$v['id'],lang('delete'));
+                    $str = $str ? $str.$this->operating($url,lang('edit')) : '';
+                    $list[$k][] = $str.$this->bt_onclick('task_del',$v['id'],lang('delete'));
                 }
                 $count = Db::table('sys_call_case_task')->where($condition)->where([['name','like',"%".input('search')."%"]])->count();;
                 $data =  $this->show_paging_info($info['page_echo'],$count,$list);
@@ -381,7 +388,7 @@ class Channel extends ChannelBaseController
             if(input('id')){//修改 
                 $id = input('id');
                 $data_edit = [
-                    'softphone_count' => $softphone_count,
+                    '  ' => $softphone_count,
                     'call_multiple' => input('call_multiple'),
                     'recall_count' => input('recall_count'),
                 ];

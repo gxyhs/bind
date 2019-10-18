@@ -194,5 +194,4 @@ class Index extends AdminBaseController
             }
         }
     }
-
 }

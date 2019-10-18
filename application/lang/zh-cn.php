@@ -39,6 +39,8 @@ return [
     'enable' => '是否是开启',
     'yes' => '是',
     'no' => '否',
+    'on_line'=>'在线',
+    'off_line'=>'离线',
     'offline' => '未开始',
     'online' => '已开始',
     'in_the_call' => '暂停中',

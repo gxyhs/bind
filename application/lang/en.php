@@ -37,6 +37,8 @@ return [
     'enable' => 'Is it open?',
     'yes' => 'Yes',
     'no' => 'No',
+    'on_line'=>'OnLine',
+    'off_line'=>'OffLine',
     'offline' => 'Not at the',
     'online' => 'Have begun to',
     'in_the_call' => 'In the pause',
