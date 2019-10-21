@@ -203,7 +203,7 @@
                                 </div>  
                                 <div class="modal-footer">  
                                     <button type="button" class="btn btn-default" data-dismiss="modal">{:lang('cancel')}</button>  
-                                    <button type="button" class="btn btn-primary submit">{:lang('submit')}</button>  
+                                    <button type="button" class="btn btn-primary new_password_submit">{:lang('submit')}</button>  
                                 </div>  
                             </div>  
                         </div>  
@@ -227,7 +227,7 @@
                         $('#change_password').on('click', function () {
                             $('#myModal').modal();
                         })
-                        $('.submit').on('click',function(){
+                        $('.new_password_submit').on('click',function(){
                             var original_password = $('.original_password').val();
                             var new_password = $('.new_password').val();
                             var confirm_password = $('.confirm_password').val();
@@ -247,6 +247,11 @@
                                     if(data.status == 1){
                                         toastr.success(data.message);
                                         $('#myModal').modal('hide')
+                                        if(is_login == 1){
+                                            window.location.href="{:url('Admin/index')}"
+                                        }else if(is_login == 2){
+                                            window.location.href="{:url('Login/user')}"
+                                        }
                                     }else{
                                         toastr.error(data.message);
                                     }
