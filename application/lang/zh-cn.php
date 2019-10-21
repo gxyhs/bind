@@ -4,6 +4,7 @@ return [
     'navigation' => '导航',
     'pretest' => '预测试外呼后台',
     'upload_call_case' => '呼叫案例管理',
+    'task_statistics'=>'任务统计管理',
 
     'logout' => '退出登录',
     'change_password' => '修改密码',
@@ -47,6 +48,7 @@ return [
     'talking' => '已结束',
 
     'phone' => '电话',
+    'phone_count' => '电话数量',
     'extend_id' => '扩展id',
     'desc' => '描述',
 
@@ -57,6 +59,7 @@ return [
     'softphone_count' => '话机数量',
     'call_case_count' => '呼叫数量',
     'call_case_time' =>'通话时长',
+    'average_call_duration'=>'平均通话时长',
     'call_status' => '呼叫状态',
     'last_call_time' => '最后一次呼叫',
 

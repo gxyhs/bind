@@ -4,6 +4,7 @@ return [
     'navigation' => 'navigasi',
     'pretest' => 'Pra-tes panggilan keluar',
     'upload_call_case' => 'Unggah kotak panggilan',
+    'task_statistics'=>'Manajemen statistik tugas',
 
     'logout' => 'Logout',
     'change_password' => 'Ubah kata sandi',
@@ -47,6 +48,8 @@ return [
     'talking' => 'Saya sudah berakhir',
 
     'phone' => 'The phone',
+    'phone_count' => 'Jumlah panggilan',
+    'average_call_duration'=>'Durasi panggilan rata-rata',
     'extend_id' => 'Extend id',
     'desc' => 'Deskripsi',
 

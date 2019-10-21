@@ -467,4 +467,29 @@ class Channel extends ChannelBaseController
         return  $uuid;
     
     }
+    public function taskStatistics()
+    {
+        if(Request()->isPost()){
+            $info = $this->get_paging_info();
+            $softphone = $this->CallSoftphone->alias('softphone')->join('sys_call_case_task task','task.id=softphone.task_id','right')->field('softphone.id,softphone.account,softphone.task_id,task.name')->select()->toArray();
+            foreach ($softphone as $k=>$v){
+                $tmp_call= $this->CallCase->where(['task_id'=>$v['task_id'],'softphone'=>$v['account']])->field('count(id) as softphone_count,sum(call_duration) as call_case_time,avg(call_duration) as average_call_duration')->select()->toArray();
+                $tmp_json = json_encode($tmp_call);
+                $tmp_json = str_replace('null','0.0000',json_encode($tmp_call));
+                $tmp_call = json_decode($tmp_json,true);
+                $tmp_call = array_merge($softphone[$k],$tmp_call[0]);
+                $tmp_call[] = '<input type="checkbox" class="ids" id="'.$v['id'].'" task_id="'.$v['task_id'].'">';
+                $softphone[$k] = array_values($tmp_call);
+            }
+            $count = count($softphone);
+            $data =  $this->show_paging_info($info['page_echo'],$count,$softphone);
+            return $data;
+        }
+        $this->assign('search',input('search'));
+        $this->assign('status_key',input('status'));
+        $this->assign('status',$this->status);
+        $userList = $this->channelUser->field('id,account')->select();
+        $this->assign('userList', $this->object_array($userList));
+        return $this->fetch();
+    }
 }

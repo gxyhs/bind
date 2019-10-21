@@ -4,6 +4,7 @@ return [
     'navigation' => 'Navigation',
     'pretest' => 'Pre-test outbound call',
     'upload_call_case' => 'Upload call case',
+    'task_statistics'=>'Task statistics management',
 	'role_manage' => 'role manage',
     'logout' => 'Log Out',	'change_password' => 'change Password',
     'original_password' => 'Original password',
@@ -45,6 +46,8 @@ return [
     'talking' => 'Has ended',
 
     'phone' => 'Phone',
+    'phone_count' => 'Phone Count',
+    'average_call_duration'=>'Average call duration',
     'extend_id' => 'Extend id',
     'desc' => 'description',
 

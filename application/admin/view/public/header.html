@@ -75,6 +75,7 @@
                     <li {if $action == "telephone"}class="active"{/if}><a href="{:url('Channel/telephone')}"> {:lang('telephone')}</a></li>
                     <li {if in_array($action,['call_case_softphone','add_call_case_softphone'])}class="active"{/if}><a href="{:url('Channel/call_case_softphone')}"> {:lang('call_case_softphone')}</a></li>
                     <li {if $action == "index"}class="active"{/if}><a href="{:url('Channel/index')}"></i> <span> {:lang('upload_call_case')}</span></a></li>
+                    <li {if $action == "taskstatistics"}class="active"{/if}><a href="{:url('Channel/taskStatistics')}"></i> <span> {:lang('task_statistics')}</span></a></li>
                     {/if}
                     <!-- <li class="menu-list">
                         <a href=""></i>  <span>{:lang('client')}</span></a>
