@@ -59,12 +59,16 @@ return [
     'call_case_time' =>'Durasi panggilan',
     'call_status' => 'Status panggilan',
     'last_call_time' => 'Panggilan terakhir',
+    'notify_sms' => 'Isi SMS',
+
     'start' => 'Klik mulai',
     'stop' => 'Klik',
     'start_again' => 'Mulai dari awal',
     'completion_degree' => 'Penyelesaian',
     'no_call' => 'Tidak dipanggil',
     'call_completion' => 'Panggilan selesai',
+
+    'online_number' => 'Menghitung online',
 ];
 
 ?>
