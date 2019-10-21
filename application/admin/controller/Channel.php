@@ -68,7 +68,7 @@ class Channel extends ChannelBaseController
             $original = md5(trim($_POST['original_password']));
             $uid = session('channel_uid');
             $condition = ['id'=>$uid];
-            $oglFind = $this->ChannelUser->where($condition)->find();
+            $oglFind = $this->channelUser->where($condition)->find();
             $back = [];
             if($original != $oglFind->password){
                 $back['message'] = "Kata sandi asli salah";
@@ -81,7 +81,7 @@ class Channel extends ChannelBaseController
                 return json($back);
             }
             try{
-                $this->ChannelUser->where($condition)->update(['password'=>md5(trim($_POST['new_password']))]);
+                $this->channelUser->where($condition)->update(['password'=>md5(trim($_POST['new_password']))]);
                 $back['message'] = "success";
                 $back['status'] = 1;
             }catch(Exception $e){

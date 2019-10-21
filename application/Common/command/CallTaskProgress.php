@@ -13,7 +13,7 @@ Class CallTaskProgress extends Command
         $this->setName('CallTaskProgress')->setDescription('计算呼叫案例进度');
     }
     protected  function execute(Input $input, Output $output)
-    {   
+    {
         try{
             $call_case_task = new CallCaseTaskModel();
             $sql = 'UPDATE sys_call_case_task SET completion=(CASE id';
@@ -22,10 +22,10 @@ Class CallTaskProgress extends Command
                 ['call_case_count','neq',0],
                 ['completion','neq',100]
             ];
-        $call_case_task_data = $call_case_task->field('id,call_case_count')->select()->toArray();
+           $call_case_task_data = $call_case_task->field('id,call_case_count')->select()->toArray();
 	    if(empty($call_case_task_data)){
-            $output->writeln('No Data');
-            return false;
+		$output->writeln('No Data');
+		return false;
 	    }
             $CallCase = new CallCaseModel();
             //处理数据
@@ -43,15 +43,11 @@ Class CallTaskProgress extends Command
             $call_case_task_ids = implode(',',$call_case_task_id);
             $sql .= ' WHERE id IN('.trim($call_case_task_ids,',').')';
             Db::query($sql);
+	    trace('我执行了','info');
             $output->writeln('successfully');
         }catch (\Exception $e){
 	    trace($e->getMessage(),'error');
             $output->writeln($e->getMessage());
         }
-    }
-    public function logPrint($postObj) {
-        $fp = fopen('/data/api2.txt', 'a+');
-        fwrite($fp, var_export($postObj, true));
-        fclose($fp);
     }
 }
