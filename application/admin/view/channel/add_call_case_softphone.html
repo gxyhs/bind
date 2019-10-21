@@ -29,6 +29,11 @@
                                 <label for="name">{:lang('call_multiple')}</label>
                                 <input type="text" class="form-control" name="call_multiple" placeholder="{:lang('call_multiple')}">
                             </div>
+                            <div class="form-group">
+                                <label for="name">{:lang('notify_sms')}</label>
+                                <textarea class="form-control" name="notify_sms" id="commentContent" class="comment-content" placeholder="短信内容" onkeyup="checkTextLen(this)" rows="8"></textarea>
+                                <span id="checklen">还可输入 <strong>250</strong> 字符</span>
+                            </div>
                             <!--<div class="form-group">
                                 <label for="name">{:lang('recall_count')}</label>
                                 <input type="text" class="form-control" name="recall_count" placeholder="{:lang('recall_count')}">
@@ -122,6 +127,16 @@
         //         }
         //     })
         // })
+        function checkTextLen(obj) {
+            var val = $(obj).val().length;
+            if (val <= 250) {
+                $("#checklen").html("还可输入 <strong>"+ Math.floor(250-val) +"</strong> 个字").css('color', '');
+                $("#commentContent").removeAttr("disabled");
+            }else {
+                $("#commentContent").attr("disabled", "disabled").css("background","#ea0f0f");
+                $("#checklen").html(" 已经超过<strong>"+ Math.floor(val-250) +"</strong> 个字符").css('color', '#ea0f0f');
+            }
+        }
     </script>
     {include file="public/footer" /}
     

@@ -45,7 +45,7 @@ class Index extends AdminBaseController
     public function change_password(){
         if(IS_POST){
             $original = md5(trim($_POST['original_password']));
-            $uid = session('channel_uid');
+            $uid = session('admin_uid');
             $condition = ['id'=>$uid];
             $oglFind = $this->adminUser->where($condition)->find();
             $back = [];

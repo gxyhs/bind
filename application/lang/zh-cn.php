@@ -62,6 +62,7 @@ return [
     'average_call_duration'=>'平均通话时长',
     'call_status' => '呼叫状态',
     'last_call_time' => '最后一次呼叫',
+    'notify_sms' => '短信内容',
 
     'start' => '点击开始',
     'stop' => '点击暂停',
@@ -69,6 +70,9 @@ return [
     'completion_degree' => '完成度',
     'no_call' => '未呼叫',
     'call_completion' => '呼叫完成',
+
+    'online_number' => '在线数',
+
 ];
 
 ?>

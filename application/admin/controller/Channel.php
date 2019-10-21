@@ -185,6 +185,11 @@ class Channel extends ChannelBaseController
         $this->assign('status',$this->status);
         $userList = $this->channelUser->field('id,account')->select();
         $this->assign('userList', $this->object_array($userList));
+        //话机在线数量
+        $where['channel_id'] = session('channel_uid');
+        $where['status'] = 1;
+        $telCount = $this->softphone->where($where)->count();
+        $this->assign('telCount',$telCount);
         return $this->fetch();
     }
     public function tel_add(){
@@ -373,10 +378,7 @@ class Channel extends ChannelBaseController
         $this->redirect('Channel/call_case_softphone');
     }
     public function add_call_case_softphone_ajax(){
-        $file = request()->file();
-        if(!isset($file['excel'])){
-            return $this->error('没有呼叫案列上传');
-        }
+       
         Db::startTrans();
         try{
             // if(empty(input('name'))){
@@ -384,24 +386,32 @@ class Channel extends ChannelBaseController
             // }
             $call_soft = explode(',',input('call_soft'));
             $softphone_count = count($call_soft);
-            
+            if(mb_strlen(input('notify_sms'),'utf-8') > 250){
+                $this->error("短信内容不能超过250个字符 ！");
+            }
             if(input('id')){//修改 
                 $id = input('id');
                 $data_edit = [
-                    '  ' => $softphone_count,
+                    'softphone_count' => $softphone_count,
                     'call_multiple' => input('call_multiple'),
                     'recall_count' => input('recall_count'),
+                    'notify_sms' => input('notify_sms'),
                 ];
                 Db::table('sys_call_case_task')->where('id',$id)->update($data_edit);
                 $this->CallSoftphone->where('task_id',$id)->delete();
                 $this->add_softphone($call_soft,$id);
             }else{
+                $file = request()->file();
+                if(!isset($file['excel'])){
+                    return $this->error('没有呼叫案列上传');
+                }
                 $data = [
                     'name' => input('name'),
                     'channel_id' => session('channel_uid'),
                     'softphone_count' => $softphone_count,
                     'call_multiple' => input('call_multiple'),
                     'recall_count' => input('recall_count'),
+                    'notify_sms' => input('notify_sms'),
                     'add_time' => date('Y-m-d H:i:s'),
                 ];
                 $id = Db::table('sys_call_case_task')->insertGetId($data);
