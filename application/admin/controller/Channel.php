@@ -35,8 +35,8 @@ class Channel extends ChannelBaseController
             2=>lang('call_completion'),
         ];
         $this->inline = [
-            lang('on_line'),
-            lang('off_line')
+            lang('off_line'),
+            lang('on_line')
         ];
 	}
     public function index(){
