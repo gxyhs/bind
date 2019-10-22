@@ -481,17 +481,22 @@ class Channel extends ChannelBaseController
     {
         if(Request()->isPost()){
             $info = $this->get_paging_info();
-            $softphone = $this->CallSoftphone->alias('softphone')->join('sys_call_case_task task','task.id=softphone.task_id','right')->field('softphone.id,softphone.account,softphone.task_id,task.name')->select()->toArray();
+            $length = $info['page_length'];
+            $start = $info['page_start'];
+            $softphone = $this->CallSoftphone->alias('softphone')->join('sys_call_case_task task','task.id=softphone.task_id','right')->field('softphone.id,softphone.account,softphone.task_id,task.name')->where([['softphone.account','like',"%".input('search')."%"]])->limit($start,$length)->select()->toArray();
             foreach ($softphone as $k=>$v){
                 $tmp_call= $this->CallCase->where(['task_id'=>$v['task_id'],'softphone'=>$v['account']])->field('count(id) as softphone_count,sum(call_duration) as call_case_time,avg(call_duration) as average_call_duration')->select()->toArray();
-                $tmp_json = json_encode($tmp_call);
-                $tmp_json = str_replace('null','0.0000',json_encode($tmp_call));
-                $tmp_call = json_decode($tmp_json,true);
+                if($tmp_call[0]['call_case_time'] == null){
+                    $tmp_call[0]['call_case_time'] = 0;
+                }
+                if($tmp_call[0]['average_call_duration'] == null){
+                    $tmp_call[0]['average_call_duration'] = '0.0000';
+                }
                 $tmp_call = array_merge($softphone[$k],$tmp_call[0]);
-                $tmp_call[] = '<input type="checkbox" class="ids" id="'.$v['id'].'" task_id="'.$v['task_id'].'">';
+//                $tmp_call[] = '<input type="checkbox" class="ids" id="'.$v['id'].'" task_id="'.$v['task_id'].'">';
                 $softphone[$k] = array_values($tmp_call);
             }
-            $count = count($softphone);
+            $count = $this->CallSoftphone->alias('softphone')->join('sys_call_case_task task','task.id=softphone.task_id','right')->field('softphone.id,softphone.account,softphone.task_id,task.name')->where([['softphone.account','like',"%".input('search')."%"]])->count();
             $data =  $this->show_paging_info($info['page_echo'],$count,$softphone);
             return $data;
         }
