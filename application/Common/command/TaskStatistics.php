@@ -31,7 +31,7 @@ Class TaskStatistics extends Command
                 $tmp_data[$k]['task_id'] = $v['task_id'];
                 $tmp_data[$k]['add_time'] = date('Y-m-d H:i:s',time());
                 $tmp_data[$k] = array_merge($tmp_data[$k],$tmp_call[0]);
-                if($tmp_number === 10){
+                if($tmp_number === 1000){
                     $output->writeln($tmp_number);
                     $this->insertStatistics($tmp_data);
                     $tmp_number = 1;
