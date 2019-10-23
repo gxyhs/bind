@@ -22,11 +22,11 @@ Class CallTaskProgress extends Command
                 ['call_case_count','neq',0],
                 ['completion','neq',100]
             ];
-           $call_case_task_data = $call_case_task->field('id,call_case_count')->select()->toArray();
-	    if(empty($call_case_task_data)){
-		$output->writeln('No Data');
-		return false;
-	    }
+            $call_case_task_data = $call_case_task->field('id,call_case_count')->select()->toArray();
+            if(empty($call_case_task_data)){
+                $output->writeln('No Data');
+                return false;
+            }
             $CallCase = new CallCaseModel();
             //处理数据
             foreach($call_case_task_data as $k=>$v){
@@ -43,11 +43,16 @@ Class CallTaskProgress extends Command
             $call_case_task_ids = implode(',',$call_case_task_id);
             $sql .= ' WHERE id IN('.trim($call_case_task_ids,',').')';
             Db::query($sql);
-	    trace('我执行了','info');
+	        trace('我执行了','info');
             $output->writeln('successfully');
         }catch (\Exception $e){
-	    trace($e->getMessage(),'error');
+	        trace($e->getMessage(),'error');
             $output->writeln($e->getMessage());
         }
+    }
+    public function logPrint($postObj) {
+        $fp = fopen('/data/api.txt', 'a+');
+        fwrite($fp, var_export($postObj, true));
+        fclose($fp);
     }
 }
