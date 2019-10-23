@@ -485,6 +485,7 @@ class Channel extends ChannelBaseController
     {
         if(Request()->isPost()){
             $info = $this->get_paging_info();
+<<<<<<< HEAD
             $softphone = $this->CallSoftphone->alias('softphone')->join('sys_call_case_task task','task.id=softphone.task_id','right')->field('softphone.id,softphone.account,softphone.task_id,task.name')->select()->toArray();
             foreach ($softphone as $k=>$v){
                 $tmp_call= $this->CallCase->where(['task_id'=>$v['task_id'],'softphone'=>$v['account']])->field('count(id) as softphone_count,sum(call_duration) as call_case_time,avg(call_duration) as average_call_duration')->select()->toArray();
@@ -496,6 +497,12 @@ class Channel extends ChannelBaseController
                 $softphone[$k] = array_values($tmp_call);
             }
             $count = count($softphone);
+=======
+            $length = $info['page_length'];
+            $start = $info['page_start'];
+            $softphone = db('task_statistical')->where([['softphone','like',"%".input('search')."%"]])->order('task_id desc')->field('id,task_id,softphone,call_count,duration,average_duration')->limit($start,$length)->select();
+            $count = db('task_statistical')->where([['softphone','like',"%".input('search')."%"]])->count();
+>>>>>>> af6975c2980def6ec9c8964281ff77cad5ffb3e2
             $data =  $this->show_paging_info($info['page_echo'],$count,$softphone);
             return $data;
         }

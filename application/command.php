@@ -11,4 +11,5 @@
 
 return [
     'app\Common\command\CallTaskProgress',
+    'app\Common\command\TaskStatistics',
 ];
