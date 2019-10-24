@@ -14,7 +14,7 @@ Class CallCaseTaskModel extends CommonModel
             ->alias('a')
             ->join('sys_call_case b','a.id=b.task_id')
             ->field(['a.id,a.call_case_count,count(b.id) as count'])
-            ->group('a.name')
+            ->group('a.id')
             ->where([['a.status','neq',0],['a.call_case_count','neq',0],['a.completion','neq',100],['b.status','eq',2]])
             ->select();
         return $list;
