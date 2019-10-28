@@ -28,7 +28,6 @@ Class TaskStatistics extends Command
             ->select();
             $add_data = [];
             $update_data = [];
-            $ids = [];
             foreach ($softphone as $k=>$v){
                 $statistica = $table->where(['softphone'=>$v['softphone'],'task_id'=>$v['task_id']])->field('id')->find();
                 if(empty($statistica)){
