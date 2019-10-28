@@ -15,6 +15,7 @@ use app\Common\Model\CallCaseModel;
 use app\Common\Model\CallSoftphoneModel;
 use app\Common\Model\StatisticalModel;
 use think\facade\App;
+use think\facade\Env;
 use think\Db;
 
 class Channel extends ChannelBaseController
