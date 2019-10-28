@@ -15,6 +15,7 @@ use app\Common\Model\CallCaseModel;
 use app\Common\Model\CallSoftphoneModel;
 use app\Common\Model\StatisticalModel;
 use think\facade\App;
+use think\facade\Env;
 use think\Db;
 
 class Channel extends ChannelBaseController
@@ -498,5 +499,27 @@ class Channel extends ChannelBaseController
         $this->assign('status_key',input('status'));
         $this->assign('status',$this->status);
         return $this->fetch();
+    }
+    public function downloadTemplate()
+    {
+        $file = Env::get('root_path').'public/static/call_case.xlsx';
+        if(!file_exists($file)){
+            return $this->error('文件不存在');
+        }else{
+            // 打开文件
+            $file_operation = fopen($file, 'r');
+            // 输入文件标签
+            Header('Content-type: application/octet-stream');
+            Header('Accept-Ranges: bytes');
+            Header('Accept-Length:'.filesize($file));
+            Header('Content-Disposition: attachment;filename=call_case.xlsx');
+            ob_clean();
+            flush();
+            //输出文件内容
+            //读取文件内容并直接输出到浏览器
+            echo fread($file_operation, filesize($file));
+            fclose($file_operation);
+            exit();
+        }
     }
 }
