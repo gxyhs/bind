@@ -70,6 +70,10 @@ return [
     'completion_degree' => 'Completion Degree',
 
     'online_number' => 'The online number',
+    'download' => 'Click on the download',
+    'the_template' => 'The template',
+
+    'enter_task' => 'Please enter task ID',
 ];
 
 ?>

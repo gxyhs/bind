@@ -20,7 +20,24 @@
                                             <button type="submit" class="btn btn-default">submit</button>
                                             <button type="reset" class="btn btn-default">clear</button>
                                         </form>
-                                        <a href="{:url('Channel/add_call_case_softphone')}" style="float: right;" class="btn btn-default">{:lang('new_task')}</a>
+                                        <div style="float: left; width: 60%; margin-left:10%;" class="form-inline form-search">
+                                            <!-- <div style="float: left;margin: 6px;">
+                                                <label for="ary_to_form_9">选择任务</label>
+                                                <select name="loan_daycount">
+                                                    <option value="-1">全部</option>
+                                                    <option value="7">7</option>
+                                                </select>
+                                            </div> -->
+                                            <div class="form-group">
+                                                <label for="">{:lang('enter_task')}:</label>
+                                                <input id="task_id" type="text" name="search" placeholder="{:lang('enter_task')}" value="">
+                                            </div>
+                                            <a class="btn btn-info  btn-default" onclick="taskExcel()">{:lang('export_excal')}</a>
+                                            <a href="{:url('Channel/add_call_case_softphone')}" style="float: right;" class="btn btn-default">{:lang('new_task')}</a>
+                                        </div>
+                                        
+                                    
+                                        
                                 </div>
                             </div>
                             <!-- <header class="panel-heading ">
@@ -89,6 +106,14 @@
             if(window.confirm("您确定执行此操作吗？")) {
                 window.location.href="{:url('Channel/task_start')}?id="+id;
             }
+        }
+        function taskExcel(){
+            var task_id = $('#task_id').val();
+            if(task_id == ''){
+                toastr.error('empty task_id');
+                return false;
+            }
+            window.location.href="{:url('Extend/task_excal')}?task_id="+task_id;
         }
     </script>
     {include file="public/footer" /}
