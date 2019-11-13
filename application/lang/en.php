@@ -70,6 +70,7 @@ return [
     'completion_degree' => 'Completion Degree',
 
     'online_number' => 'The online number',
+    'export'=>'Export',
 ];
 
 ?>

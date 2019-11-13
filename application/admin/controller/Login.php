@@ -1,6 +1,7 @@
 <?php
 namespace app\admin\controller;
 use think\Controller;
+use think\Exception;
 use think\Validate;
 use think\captcha\Captcha;
 use app\Common\Model\ChannelUserModel;
@@ -11,7 +12,7 @@ use think\facade\Env;
  * @author yhs 2019.09.20
  */
 class Login extends Controller
-{   
+{
     public function user()
     {   
         return $this->fetch('login:user');

@@ -8,7 +8,7 @@ Class StatisticalModel extends CommonModel
         return Db::table($this->table)
         ->alias('a')
         ->join('sys_call_case_task b','a.task_id=b.id')
-        ->field("a.id,b.name as task_name,a.softphone,a.call_count,a.duration,a.average_duration")
+        ->field("a.id,b.name as task_name,a.task_id,a.softphone,a.call_count,a.duration,a.average_duration")
         ->order('a.task_id desc,a.softphone asc')
         ->group('a.id')
         ->where('a.channel_id',session('channel_uid'))

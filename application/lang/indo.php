@@ -72,6 +72,7 @@ return [
     'call_completion' => 'Panggilan selesai',
 
     'online_number' => 'Menghitung online',
+    'export'=>'Ekspor',
 ];
 
 ?>

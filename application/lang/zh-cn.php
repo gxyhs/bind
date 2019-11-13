@@ -72,7 +72,7 @@ return [
     'call_completion' => '呼叫完成',
 
     'online_number' => '在线数',
-
+    'export'=>'导出',
 ];
 
 ?>

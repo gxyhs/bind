@@ -500,4 +500,21 @@ class Channel extends ChannelBaseController
         $this->assign('status',$this->status);
         return $this->fetch();
     }
+    public function getTaskId()
+    {
+        return db('call_case_task')->column('id');
+    }
+    public function downTask()
+    {
+        $task_id = input('get.task_id');
+        if(!is_numeric($task_id)){
+            return res(101,'请上传正确的参数');
+        }
+        $data = db('task_statistical')->where(['task_id'=>$task_id])->select();
+        if(empty($data)){
+            return res(101,'暂无可导出数据');
+        }
+        $title = ['id','任务Id','话机','电话数量','通话时长','所属渠道用户id','平均通话时长','添加时间'];
+        echo leading_out($data,$title,'task_id_'.$task_id.'_'.date('YmdHis',time()));
+    }
 }

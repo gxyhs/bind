@@ -30,7 +30,12 @@
                             <input name="excel" type="file" class="">
                             <input type="submit" value="导入Excel" class="">
                         </form> -->
-                        <button id="batch_del" style="float:right" type="text" class="btn btn-default">{:lang('batch_del')}</button>
+                        <div style="float:right;width: 300px;">
+                            <label>task_id:</label>
+                            <select name="task" aria-controls="DataTables_Table_0" class="form-control input-sm" style="width: 100px;display: inline-block;">
+                            </select>
+                            <button id="task_export" style="display: inline-block;" class="btn btn-default">{:lang('export')}</button>
+                        </div>
                     </div>
                 </div>
                 <table class="table datatable-ajax data-table">
@@ -44,6 +49,9 @@
                         </th>
                         <th>
                             {:lang('name_task')}
+                        </th>
+                        <th>
+                            {:lang('task_id')}
                         </th>
                         <th>
                             {:lang('username')}
@@ -79,5 +87,17 @@
 </section>
 {include file="public/footer" /}
 <script>
-
+    $(function () {
+        var task = $("select[name='task']");
+        $.post('getTaskId',{},function(data){
+            var str = '';
+            for (i in data){
+                str += '<option value='+data[i]+'>'+data[i]+'</option>';
+            }
+            task.append(str);
+        })
+        $('#task_export').click(function(){
+            window.open('downTask?task_id='+task.val());
+        })
+    })
 </script>
