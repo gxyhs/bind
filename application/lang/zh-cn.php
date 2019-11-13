@@ -72,7 +72,11 @@ return [
     'call_completion' => '呼叫完成',
 
     'online_number' => '在线数',
-    'export'=>'导出',
+    'download' => '点击下载',
+    'the_template' => '模板',
+    
+    'enter_task' => '请输入任务ID',
+    'export_excal' => '导出Excel',
 ];
 
 ?>

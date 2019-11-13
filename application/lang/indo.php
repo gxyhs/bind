@@ -72,7 +72,11 @@ return [
     'call_completion' => 'Panggilan selesai',
 
     'online_number' => 'Menghitung online',
-    'export'=>'Ekspor',
+    'download' => 'Klik download',
+    'the_template' => 'Piringan itu.',
+
+    'enter_task' => 'Silahkan masukkan tugas ID',
+    'export_excal' => 'Ekspor penanda Excel',
 ];
 
 ?>
