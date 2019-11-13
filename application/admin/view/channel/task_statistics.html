@@ -97,7 +97,7 @@
             task.append(str);
         })
         $('#task_export').click(function(){
-            window.open('downTask?task_id='+task.val());
+            window.location.href="{:url('Extend/downTask')}?task_id="+task.val();
         })
     })
 </script>

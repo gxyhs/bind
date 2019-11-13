@@ -74,6 +74,7 @@ return [
     'the_template' => 'The template',
 
     'enter_task' => 'Please enter task ID',
+    'export_excal' => 'export Excel',
 ];
 
 ?>

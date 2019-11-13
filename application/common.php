@@ -125,11 +125,10 @@ require $rootPath.'extend/PHPExcel/PHPExcel.php';
     header ('Expires: Mon, 26 Jul 1997 05:00:00 GMT'); // Date in the past
     header ('Last-Modified: '.gmdate('D, d M Y H:i:s').' GMT'); // always modified
     header ('Cache-Control: cache, must-revalidate'); // HTTP/1.1
-    header ('Pragma: public'); // HTTP/1.0
+    header ('Pragma: public'); // HTTP/1.0//no-cache
 
     $objWriter = \PHPExcel_IOFactory::createWriter($objPHPExcel, 'Excel2007');
-    $objWriter->save('php://output');
-    exit;
+    $objWriter->save('php://output');//exit;
 }
 
 /**

@@ -8,6 +8,7 @@ use app\Common\Controller\ChannelBaseController;
 use app\Common\Model\CallCaseTaskModel;
 use app\Common\Model\CallCaseModel;
 use Exception;
+use think\Db;
 class Extend extends ChannelBaseController
 {  
     public function task_excal(){
@@ -23,5 +24,18 @@ class Extend extends ChannelBaseController
         $name = $task['name'];
         $data = $this->object_array($data);
         return leading_out($data,$head,$name);
+    }
+    public function downTask()
+    {
+        $task_id = input('get.task_id');
+        if(!is_numeric($task_id)){
+            $this->error('empty task id');
+        }
+        $data = db('task_statistical')->where(['task_id'=>$task_id])->field('task_id,softphone,call_count,duration,average_duration,channel_id')->select();
+        if(empty($data)){
+            $this->error('empty task_statistical');
+        }
+        $title = ['任务Id','话机','电话数量','通话时长','平均通话时长','所属渠道用户id'];
+        return leading_out($data,$title,'task_id_'.$task_id.'_'.date('YmdHis',time()));
     }
 }
