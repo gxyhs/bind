@@ -51,7 +51,8 @@ class Login extends Controller
         }
     }
     function verify(){
-        $captcha = new Captcha();
+        $config = ['length'=>4];
+        $captcha = new Captcha($config);
         return $captcha->entry();
     }
     public function downloadTemplate()
