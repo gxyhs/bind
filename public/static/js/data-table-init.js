@@ -42,8 +42,11 @@ function init_DataTables() {
     $('#datatable-keytable').DataTable({
         keys: true
     });
-
+// 6596
     function retrieveData(url, aoData, fnCallback) {
+        // aoData[3].value = 0;
+        console.log(aoData);
+        console.log(url);
         $.ajax({
             url : url,//这个就是请求地址对应sAjaxSource
             data : {
@@ -112,7 +115,7 @@ function init_DataTables() {
         "bPaginite": true,
         "renderer": "bootstrap", //渲染样式:Bootstrap和jquery-ui
         "bInfo": true,
-        "bStateSave": true,// //保存状态到cookie ***** 很重要 ， 当搜索的时候页面一刷新会导致搜索的消失。使用这个属性就可避免了
+        "bStateSave": false,// //保存状态到cookie ***** 很重要 ， 当搜索的时候页面一刷新会导致搜索的消失。使用这个属性就可避免了
         "bSort": false,
         "processing": false,
         "bServerSide": true,
