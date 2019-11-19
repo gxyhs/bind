@@ -42,8 +42,11 @@ function init_DataTables() {
     $('#datatable-keytable').DataTable({
         keys: true
     });
-
+// 6596
     function retrieveData(url, aoData, fnCallback) {
+        // aoData[3].value = 0;
+        console.log(aoData);
+        console.log(url);
         $.ajax({
             url : url,//这个就是请求地址对应sAjaxSource
             data : {
