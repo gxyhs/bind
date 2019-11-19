@@ -60,6 +60,15 @@ function init_DataTables() {
             //     alert("status:"+XMLHttpRequest.status+",readyState:"+XMLHttpRequest.readyState+",textStatus:"+textStatus);
 
             // }
+            // success:function(data){
+            //     var frontData = {
+            //         // "iTotalRecords": (data.totalCount == null) ? 0 : data.totalCount,
+            //         // "iTotalDisplayRecords": (data.totalCount == null) ? 0 : data.totalCount,
+            //         "sEcho": data.sEcho,
+            //         //  "aaData": data.aaData
+            //       };
+            //       fnCallback(frontData);
+            // }
         }).done(function (result) {
             $('.check-all').attr("checked", false);
             fnCallback(result);//把返回的数据传给这个方法就可以了,datatable会自动绑定数据的
@@ -74,12 +83,14 @@ function init_DataTables() {
     } 
 
     var form_serialize = $('.form-search').serialize();
+    
     $('.datatable-ajax').DataTable({
         "PaginationType": "bootstrap",
         dom: '<"tbl-top clearfix"lfr>,t,<"tbl-footer clearfix"<"tbl-info pull-left"i><"tbl-pagin pull-right"p>>',
         tableTools: {
             "sSwfPath": "swf/copy_csv_xls_pdf.swf"
         },
+        
         "sPaginationType": "full_numbers",
         "aLengthMenu" :[20,50,75,100,500],
         "iDisplayLength": 20,  ///默认显示20行
@@ -112,10 +123,12 @@ function init_DataTables() {
         "bPaginite": true,
         "renderer": "bootstrap", //渲染样式:Bootstrap和jquery-ui
         "bInfo": true,
-        "bStateSave": true,// //保存状态到cookie ***** 很重要 ， 当搜索的时候页面一刷新会导致搜索的消失。使用这个属性就可避免了
+        "bStateSave": false,// //保存状态到cookie ***** 很重要 ， 当搜索的时候页面一刷新会导致搜索的消失。使用这个属性就可避免了
         "bSort": false,
         "processing": false,
         "bServerSide": true,
+        "bFilter" : true, //打开搜索框
+        // "sScrollX" : 820,//DataTables的宽 
 		
         "sAjaxSource": "?"+form_serialize,//这个是请求的地址
         "fnServerData": retrieveData,// 获取数据的处理函数
@@ -143,6 +156,7 @@ function init_DataTables() {
             { orderable: false, targets: [0] }
         ]
     });
+    
     $datatable.on('draw.7dt', function() {
         $('checkbox input').iCheck({
             checkboxClass: 'icheckbox_flat-green'

@@ -11,7 +11,7 @@
                             <div class="x_title panel-heading">
                                 <div class="" style="overflow: auto">
                                     <div  style="float: left;">
-                                        <form class="form-inline form-search" role="form" method="get">
+                                        <form class="form-inline form-search" role="form" method="post">
                                             <div class="form-group">
                                                 <label for="ary_to_form_9">客户:</label>
                                                 <select name="channel_id">
@@ -107,12 +107,20 @@
                                 <label for="email" class="control-label">{:lang('enable')}:</label>
                                 <input type="radio" checked name="enable" value="1">{:lang('yes')}
                                 <input type="radio" name="enable" value="2">{:lang('no')}
-                                
                             </div> 
-                            <div class="form-group"> 
-                                <input type="hidden" class="form-control bing_id" id="recipient-name"> 
+                           
+                            <div class="form-group" id="is_bulk">  
+                                <label for="email" class="control-label">{:lang('is_bulk')}:</label>
+                                <input type="radio" checked name="is_bulk" value="1">{:lang('yes')}
+                                <input type="radio" name="is_bulk" value="2">{:lang('no')}
+                            </div>
+                            <div class="form-group" id="munber"> 
+                                <label for="recipient-name" class="control-label">{:lang('batch_addition_quantity')}:</label>  
+                                <input type="text" class="form-control" id="add_munber" placeholder="输入批量添加数量">  
+                            </div>
+                            <div class="form-group" id="account" style="display: none;"> 
                                 <label for="recipient-name" class="control-label">{:lang('username')}:</label>  
-                                <input type="text" class="form-control account" id="recipient-name">  
+                                <input type="text" class="form-control account" placeholder="请输入账号">  
                             </div>
                             <div class="form-group">  
                                 <label for="email" class="control-label">{:lang('password')}:</label>
@@ -121,6 +129,7 @@
                             
                         </div>  
                         <div class="modal-footer">  
+                            <input type="hidden" class="form-control bing_id" id="recipient-name"> 
                             <button type="button" class="btn btn-default" data-dismiss="modal">{:lang('cancel')}</button>  
                             <button type="button" class="btn btn-primary submit">{:lang('submit')}</button>  
                         </div>  
@@ -132,6 +141,16 @@
         <!-- body content end-->
     </section>
     <script>
+            $(":radio").click(function(){
+                var is_bulk = $('input:radio[name="is_bulk"]:checked').val();
+                if(is_bulk == 1){
+                    $("#munber").css('display','block');
+                    $("#account").css('display','none');
+                }else if(is_bulk == 2){
+                    $("#munber").css('display','none');
+                    $("#account").css('display','block');
+                }
+            });
             $('#addRoleModal').on('click', function () {
                 var add_phone = "{:lang('add_phone')}";
                 $('#title').text(add_phone);
@@ -143,10 +162,13 @@
                 var password = $('.password').val();
                 var enable = $('input:radio[name="enable"]:checked').val();
                 var id = $('.bing_id').val();
+                var is_bulk = $('input:radio[name="is_bulk"]:checked').val();
+                var munber = $("#add_munber").val();
+                
                 $.ajax({
                     type : 'post',
                     url : "{:url('User/tel_add')}",
-                    data : {id:id,account:account,channel_id:channel_id,password:password,enable:enable},
+                    data : {id:id,account:account,channel_id:channel_id,password:password,enable:enable,is_bulk:is_bulk,munber:munber},
                     success:function(data){
                         if(data.status == 1){
                             toastr.success(data.message);
@@ -159,6 +181,10 @@
                 })
             })
             function user_edit(id){
+                $("#is_bulk").css('display','none');
+                $("#munber").css('display','none');
+                $("#account").css('display','block');
+
                 $('#addUsermyModal').modal();
                 $.ajax({
                     type : 'get',

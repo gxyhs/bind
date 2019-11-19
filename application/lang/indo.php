@@ -77,6 +77,10 @@ return [
 
     'enter_task' => 'Silahkan masukkan tugas ID',
     'export_excal' => 'Ekspor penanda Excel',
+
+    'caller_prefix' => 'Memanggil prefiks',
+    'is_bulk' => 'Benar atau tidak',
+    'batch_addition_quantity' => 'Menambah kuantitas pada batch',
 ];
 
 ?>

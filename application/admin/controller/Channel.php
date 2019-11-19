@@ -299,7 +299,7 @@ class Channel extends ChannelBaseController
                     $str = $str ? $str.$this->operating($url,lang('edit')) : '';
                     $list[$k][] = $str.$this->bt_onclick('task_del',$v['id'],lang('delete'));
                 }
-                $count = Db::table('sys_call_case_task')->where($condition)->where([['name','like',"%".input('search')."%"]])->count();;
+                $count = Db::table('sys_call_case_task')->where($condition)->where([['name','like',"%".input('search')."%"]])->count();
                 $data =  $this->show_paging_info($info['page_echo'],$count,$list);
                 return $data;
             }
@@ -502,6 +502,6 @@ class Channel extends ChannelBaseController
     }
     public function getTaskId()
     {
-        return db('call_case_task')->column('id');
+        return db('call_case_task')->order('id desc')->column('id');
     }
 }

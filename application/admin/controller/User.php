@@ -28,13 +28,13 @@ class User extends AdminBaseController
             if(count($info)){
                 $length = $info['page_length'];
                 $start = $info['page_start'];
-                $list = $this->channelUser->field('id,account,secret_key,secret_token,add_time')->where([['account','like',"%".input('search')."%"]])->limit($start,$length)->select();
+                $list = $this->channelUser->field('id,caller_prefix,account,password_txt,secret_key,secret_token,add_time')->where([['account','like',"%".input('search')."%"]])->order('id desc')->limit($start,$length)->select();
                
                 $list = $this->object_array($list);
                 foreach($list as $k=>$v){
                     $list[$k]['operating'] = $this->bt_onclick('user_edit',$v['id'],lang('edit')).$this->bt_onclick('user_del',$v['id'],lang('delete'));
                 }//print_r($list);die;
-                $count = $this->channelUser->where([['account','like',"%".input('search')."%"]])->select();
+                $count = $this->channelUser->where([['account','like',"%".input('search')."%"]])->count();
                 $data =  $this->show_paging_info($info['page_echo'],$count,$list);
                 return $data;
             }
@@ -43,11 +43,13 @@ class User extends AdminBaseController
         return $this->fetch();
     }
     public function user_add(){
-        if(empty(input('account'))){
+        if(empty(input('account')) || empty(input('caller_prefix'))){
             $back['message'] = "Memiliki opsi yang tidak terisi";
             $back['status'] = 0;
             return json($back);
         }
+        $_POST['caller_prefix'] = intval($_POST['caller_prefix']); 
+        $_POST['password_txt'] = $_POST['password']; 
         if(empty(input('id'))){
             if(empty(input('password'))){
                 $back['message'] = "Memiliki opsi yang tidak terisi";
@@ -81,7 +83,7 @@ class User extends AdminBaseController
     }
     public function user_edit(){
         if(input('id')){
-            $find = $this->channelUser->field('id,account')->where(['id'=>input('id')])->find();
+            $find = $this->channelUser->field('id,account,caller_prefix,password_txt')->where(['id'=>input('id')])->find();
             return json($find);
         }
     }
@@ -109,7 +111,7 @@ class User extends AdminBaseController
                 if(input('channel_id') != -1){
                     $condition = ['channel_id'=>input('channel_id')];
                 }
-                $list = $this->softphone->field('id,account,password,channel_id,status,enable,add_time')->where($condition)->where([['account','like',"%".input('search')."%"]])->limit($start,$length)->select();
+                $list = $this->softphone->field('id,account,password,channel_id,status,enable,add_time')->where($condition)->where([['account','like',"%".input('search')."%"]])->order('account asc')->limit($start,$length)->select();
                 $list = $this->object_array($list);
                 foreach($list as $k=>$v){
                     $list[$k]['status'] = $this->status[$v['status']];
@@ -119,7 +121,7 @@ class User extends AdminBaseController
                     $url = url('User/tel_details',['id'=>$v['id']]);
                     $list[$k]['operating'] = $this->bt_onclick('user_edit',$v['id'],lang('edit')).$this->bt_onclick('tel_del',$v['id'],lang('delete'));
                 }
-                $count = $this->softphone->count();
+                $count = $this->softphone->where($condition)->where([['account','like',"%".input('search')."%"]])->count();
                 $data =  $this->show_paging_info($info['page_echo'],$count,$list);
                 return $data;
             }
@@ -131,19 +133,55 @@ class User extends AdminBaseController
         return $this->fetch();
     }
     public function tel_add(){
-        if(empty(input('account')) || input('channel_id') == -1 || empty(input('password'))){
+        if(input('channel_id') == -1 || empty(input('password'))){
             $back['message'] = "Memiliki opsi yang tidak terisi";
             $back['status'] = 0;
             return json($back);
         }
-        if(empty(input('id'))){
-            $_POST['add_time'] = date('Y-m-d H:i:s');
-        }
+        $data = input();
         try{
             if(empty(input('id'))){
-                $this->softphone->insert($_POST);
+                //查询是否有重复账号
+                $account = $this->softphone->where(['account'=>input('account')])->find();
+                if(!empty($account)){
+                    $back['message'] = "账号已存在";
+                    $back['status'] = 0;
+                    return json($back);
+                }
+                $add_data = [];
+                if(input('is_bulk') == 1){
+                    $max_account = $this->softphone->where('channel_id',input('channel_id'))->max('account');
+                    $caller_prefix = $this->channelUser->where('id',input('channel_id'))->find();
+                    if(empty($max_account)){
+                        $account = $caller_prefix['caller_prefix'].'0000';
+                    }else{
+                        $account = $max_account;
+                    }
+                    for($i=0;$i<input('munber');$i++){
+                        $account = intval($account)+1;
+                        $add_data[$i] = [
+                            'channel_id' => $data['channel_id'],
+                            'account' => $account,
+                            'password' => $data['password'],
+                            'enable' => $data['enable'],
+                            'add_time' => date('Y-m-d H:i:s'),
+                        ];
+                    }
+                    $this->softphone->insertAll($add_data);
+                }else{
+                    $add_data = [
+                        'channel_id' => $data['channel_id'],
+                        'account' => $data['account'],
+                        'password' => $data['password'],
+                        'enable' => $data['enable'],
+                        'add_time' => date('Y-m-d H:i:s'),
+                    ];
+                    $this->softphone->insert($add_data);
+                }
             }else{
-                $this->softphone->where(['id'=>input('id')])->update($_POST);
+                unset($data['munber']);
+                unset($data['is_bulk']);
+                $this->softphone->where(['id'=>input('id')])->update($data);
             }
             $back['message'] = "success";
             $back['status'] = 1;

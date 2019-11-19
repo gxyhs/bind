@@ -54,7 +54,7 @@ return [
 
     'name_task' => '任务名称',
     'the_unit' => '选择话机',
-    'call_multiple' => '呼叫比列',
+    'call_multiple' => '呼叫比例',
     'recall_count' => '重生次数',
     'softphone_count' => '话机数量',
     'call_case_count' => '呼叫数量',
@@ -77,6 +77,10 @@ return [
     
     'enter_task' => '请输入任务ID',
     'export_excal' => '导出Excel',
+
+    'caller_prefix' => '呼叫前缀',
+    'is_bulk' => '是否批量添加',
+    'batch_addition_quantity' => '批量添加数量',
 ];
 
 ?>

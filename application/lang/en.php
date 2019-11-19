@@ -75,6 +75,10 @@ return [
 
     'enter_task' => 'Please enter task ID',
     'export_excal' => 'export Excel',
+
+    'caller_prefix' => 'caller prefix',
+    'is_bulk' => 'Batch add or not',
+    'batch_addition_quantity' => 'Batch addition quantity',
 ];
 
 ?>

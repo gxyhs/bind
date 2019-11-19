@@ -39,7 +39,13 @@
                                 id
                             </th>
                             <th>
+                                {:lang('caller_prefix')}
+                            </th>
+                            <th>
                                 {:lang('username')}
+                            </th>
+                            <th>
+                                {:lang('password')}
                             </th>
                             <th>
                                 secret_key
@@ -79,7 +85,11 @@
                             </button>  
                             <h4 class="modal-title" id="title">{:lang('new_users')}</h4>  
                         </div>  
-                        <div class="modal-body">  
+                        <div class="modal-body"> 
+                            <div class="form-group"> 
+                                <label for="recipient-name" class="control-label">{:lang('caller_prefix')}:</label>  
+                                <input type="text" class="form-control" id="caller_prefix">  
+                            </div> 
                             <div class="form-group"> 
                                 <input type="hidden" class="form-control user_id" id="recipient-name"> 
                                 <label for="recipient-name" class="control-label">{:lang('username')}:</label>  
@@ -87,7 +97,7 @@
                             </div>
                             <div class="form-group">  
                                 <label for="email" class="control-label">{:lang('password')}:</label>
-                                <input type="password" class="form-control password" id="new_password">
+                                <input type="text" class="form-control password" id="new_password">
                             </div>
                         </div>  
                         <div class="modal-footer">  
@@ -112,10 +122,11 @@
                 var account = $('.account').val();
                 var password = $('.password').val();
                 var id = $('.user_id').val();
+                var caller_prefix = $("#caller_prefix").val();
                 $.ajax({
                     type : 'post',
                     url : "{:url('User/user_add')}",
-                    data : {id:id,account:account,password:password},
+                    data : {id:id,account:account,password:password,caller_prefix:caller_prefix},
                     success:function(data){
                         if(data.status == 1){
                             toastr.success(data.message);
@@ -133,7 +144,9 @@
                     type : 'get',
                     url : "{:url('User/user_edit')}?id="+id,
                     success:function(data){
+                        $('#caller_prefix').val(data.caller_prefix);
                         $('.account').val(data.account);
+                        $('.password').val(data.password_txt);
                         $('.user_id').val(data.id);
                         var edit = "{:lang('edit')}";
                         $('#title').text(edit);
