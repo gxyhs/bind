@@ -280,7 +280,7 @@ class Channel extends ChannelBaseController
                 $start = $info['page_start'];
                 $condition = array();
                 $condition['channel_id'] = session('channel_uid');
-                $list = Db::table('sys_call_case_task')->field('id,name,softphone_count,call_case_count,call_multiple,completion,status,add_time')->where($condition)->where([['name','like',"%".input('search')."%"]])->limit($start,$length)->order('add_time desc')->select();
+                $list = Db::table('sys_call_case_task')->field('id,name,softphone_count,recall_count,called_count,call_case_count,call_multiple,completion,status,add_time')->where($condition)->where([['name','like',"%".input('search')."%"]])->limit($start,$length)->order('add_time desc')->select();
                 
                 $list = $this->object_array($list);
                 foreach($list as $k=>$v){
@@ -296,7 +296,12 @@ class Channel extends ChannelBaseController
                         $str = '';
                     }
                     $url = url('Channel/edit_call_case_softphone',['id'=>$v['id']]);
-                    $str = $str ? $str.$this->operating($url,lang('edit')) : '';
+                    if($v['status'] == 3){
+                        $str = $this->bt_onclick('start',$v['id'],lang('start_again'));
+                    }else{
+                        $str = $str ? $str.$this->operating($url,lang('edit')) : '';
+                    }
+                    
                     $list[$k][] = $str.$this->bt_onclick('task_del',$v['id'],lang('delete'));
                 }
                 $count = Db::table('sys_call_case_task')->where($condition)->where([['name','like',"%".input('search')."%"]])->count();
@@ -359,16 +364,20 @@ class Channel extends ChannelBaseController
     public function task_start(){
         $id = input('id');
         $find = Db::table('sys_call_case_task')->where('id',$id)->find();
-        if($find['status'] == 1){
+        if($find['status'] == 1){//暂停
             $status = ['status'=>2];
-        }elseif($find['status'] == 0){
+        }elseif($find['status'] == 0){//点击开始
             $status = ['status'=>1];
         }else{
             $status = ['status'=>1];
             $data['status'] = 0;
-            $data['call_duration'] = 0;
-            $data['call_duration'] = 0;
-            $this->CallCase->where('task_id',$id)->update($data);
+            $data['call_count'] = 0;
+            $where = [
+                'task_id' => $id,
+                'call_duration' => 0,
+                'softphone' => null
+            ];
+            $this->CallCase->where($where)->update($data);
         }
         Db::table('sys_call_case_task')->where('id',$id)->update($status);
         $this->redirect('Channel/call_case_softphone');

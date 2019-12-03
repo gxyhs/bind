@@ -56,6 +56,7 @@ return [
     'name_task' => 'Misi nama',
     'the_unit' => 'Memilih untuk membantu seorang saudari',
     'call_multiple' => 'Panggilan dari takhta',
+    'called_count' => 'nomor kontak',
     'recall_count' => 'Sering terlahir kembali.',
     'softphone_count' => 'Jumlah membantu seorang saudari',
     'call_case_count' => 'Jumlah panggilan',
