@@ -390,7 +390,6 @@ class Channel extends ChannelBaseController
         $this->redirect('Channel/call_case_softphone');
     }
     public function add_call_case_softphone_ajax(){
-       
         Db::startTrans();
         try{
             // if(empty(input('name'))){
@@ -444,7 +443,7 @@ class Channel extends ChannelBaseController
     //导入excel
     public function excel($file,$id){
         $res = leading_in($file);
-        
+
 	    $data = [];
         foreach($res as $k=>$v){
             if(!empty($v['phone'])){

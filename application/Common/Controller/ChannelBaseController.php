@@ -5,12 +5,15 @@ use think\facade\Cookie;
 use think\Lang;
 use app\Common\Model\CommonModel;
 use think\Exception;
+use think\Request;
 
 class ChannelBaseController extends BaseController {
 
     public function __construct($checkLogin = True) {
         parent::__construct();
-        $this->isLogin();
+        if(Request()->controller() != 'task' && Request()->module() != 'api'){
+            $this->isLogin();
+        }
         $controller = strtolower(CONTROLLER_NAME);
         $action = strtolower(ACTION_NAME);
         $tempname = '/' . $controller . '/' . $action;
