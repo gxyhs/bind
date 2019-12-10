@@ -11,18 +11,23 @@ Class Task
     {
         $this->channel = new Channel();
     }
+
+    /**
+     * 新建任务
+     * @return false|string
+     */
     public function newTask()
     {
         try{
-        $call_soft = explode(',',input('call_soft'));
+        $call_soft = explode(',',input('post.call_soft'));
         $softphone_count = count($call_soft);
         $data = [
-            'name' => input('name'),
-            'channel_id' => input('channel_id'),
+            'name' => input('post.name'),
+            'channel_id' => input('post.channel_id'),
             'softphone_count' => $softphone_count,
-            'call_multiple' => input('call_multiple'),
-            'recall_count' => input('recall_count'),
-            'notify_sms' => input('notify_sms'),
+            'call_multiple' => input('post.call_multiple'),
+            'recall_count' => input('post.recall_count'),
+            'notify_sms' => input('post.notify_sms'),
             'add_time' => date('Y-m-d H:i:s'),
         ];
             $id = Db::table('sys_call_case_task')->insertGetId($data);
@@ -32,10 +37,15 @@ Class Task
             return json_encode(['code'=>101,'info'=>$e->getMessage(),'data'=>null]);
         }
     }
-    public function task_case()
+
+    /**
+     * 根据任务上传案例
+     * @return false|string
+     */
+    public function taskCase()
     {
         try{
-        $task_id = input('task_id');
+        $task_id = input('post.task_id');
         $file = request()->file();
         if(!isset($file['excel'])){
             return $this->error('没有呼叫案列上传');
@@ -49,26 +59,19 @@ Class Task
         }
 
     }
-    public function task_status()
+
+    /**
+     * 任务暂停/开始
+     * @return false|string
+     */
+    public function taskStatus()
     {
         try{
-            $id = input('id');
-            $find = Db::table('sys_call_case_task')->where('id',$id)->find();
-            if($find['status'] == 1){//暂停
-                $status = ['status'=>2];
-            }elseif($find['status'] == 0){//点击开始
-                $status = ['status'=>1];
-            }else{
-                $status = ['status'=>1];
-                $data['status'] = 0;
-                $data['call_count'] = 0;
-                $where = [
-                    'task_id' => $id,
-                    'call_duration' => 0,
-                    'softphone' => null
-                ];
-                $this->channel->CallCase->where($where)->update($data);
+            $id = input('post.id');
+            if(!is_numeric(input('post.status')) || !in_array(input('post.status'),[1,2])){
+                return json_encode(['code'=>101,'info'=>'状态传入错误','data'=>null]);
             }
+            $status['status'] = input('post.status'); //1开始,2暂停
             Db::table('sys_call_case_task')->where('id',$id)->update($status);
             return json_encode(['code'=>200,'info'=>'success','data'=>null]);
         }catch (Exception $e){
