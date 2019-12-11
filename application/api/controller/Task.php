@@ -32,7 +32,7 @@ Class Task
         ];
             $id = Db::table('sys_call_case_task')->insertGetId($data);
             $this->channel->add_softphone($call_soft,$id);
-            return json_encode(['code'=>200,'info'=>'success','data'=>null]);
+            return json_encode(['code'=>200,'info'=>'success','data'=>['task_id'=>$id]]);
         }catch (Exception $e){
             return json_encode(['code'=>101,'info'=>$e->getMessage(),'data'=>null]);
         }
@@ -45,19 +45,18 @@ Class Task
     public function taskCase()
     {
         try{
-        $task_id = input('post.task_id');
-        $file = request()->file();
-        if(!isset($file['excel'])){
-            return $this->error('没有呼叫案列上传');
-        }
-        $call_case_count = $this->channel->excel($file['excel'],$task_id);
-        //更新呼叫数量
-        Db::table('sys_call_case_task')->where('id',$task_id)->update(['call_case_count'=>$call_case_count]);
+            $task_id = input('post.task_id');
+            $file = request()->file();
+            if(!isset($file['excel'])){
+                return $this->error('没有呼叫案列上传');
+            }
+            $call_case_count = $this->channel->excel($file['excel'],$task_id);
+            //更新呼叫数量
+            Db::table('sys_call_case_task')->where('id',$task_id)->update(['call_case_count'=>$call_case_count]);
             return json_encode(['code'=>200,'info'=>'success','data'=>null]);
         }catch (Exception $e){
             return json_encode(['code'=>101,'info'=>$e->getMessage(),'data'=>null]);
         }
-
     }
 
     /**
