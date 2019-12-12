@@ -10,10 +10,10 @@ Class Task
     public function __construct()
     {
         $this->channel = new Channel();
-        $token = input('token');
-        $info = explode('+',$token);
+        $secret_key = input('secret_key');
+        $secret_token = input('secret_token');
         try{
-            $account = db('channel_user')->where(['secret_key'=>$info[0],'secret_token'=>$info[1]])->field('id')->find();
+            $account = db('channel_user')->where(['secret_key'=>$secret_key,'secret_token'=>$secret_token])->field('id')->find();
             if(empty($account)){
                 exit(json_encode(['code'=>101,'info'=>'账号不存在','data'=>null]));
             }
@@ -31,9 +31,10 @@ Class Task
         try{
             $call_soft = explode(',',input('post.call_soft'));
             $softphone_count = count($call_soft);
+            $account = db('channel_user')->where(['secret_key'=>input('secret_key'),'secret_token'=>input('secret_token')])->field('id')->find();
             $data = [
                 'name' => input('post.name'),
-                'channel_id' => input('post.channel_id'),
+                'channel_id' => $account['id'],
                 'softphone_count' => $softphone_count,
                 'call_multiple' => input('post.call_multiple'),
                 'recall_count' => input('post.recall_count'),
