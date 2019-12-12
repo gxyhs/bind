@@ -19,17 +19,17 @@ Class Task
     public function newTask()
     {
         try{
-        $call_soft = explode(',',input('post.call_soft'));
-        $softphone_count = count($call_soft);
-        $data = [
-            'name' => input('post.name'),
-            'channel_id' => input('post.channel_id'),
-            'softphone_count' => $softphone_count,
-            'call_multiple' => input('post.call_multiple'),
-            'recall_count' => input('post.recall_count'),
-            'notify_sms' => input('post.notify_sms'),
-            'add_time' => date('Y-m-d H:i:s'),
-        ];
+            $call_soft = explode(',',input('post.call_soft'));
+            $softphone_count = count($call_soft);
+            $data = [
+                'name' => input('post.name'),
+                'channel_id' => input('post.channel_id'),
+                'softphone_count' => $softphone_count,
+                'call_multiple' => input('post.call_multiple'),
+                'recall_count' => input('post.recall_count'),
+                'notify_sms' => input('post.notify_sms'),
+                'add_time' => date('Y-m-d H:i:s'),
+            ];
             $id = Db::table('sys_call_case_task')->insertGetId($data);
             $this->channel->add_softphone($call_soft,$id);
             return json_encode(['code'=>200,'info'=>'success','data'=>['task_id'=>$id]]);
@@ -38,6 +38,61 @@ Class Task
         }
     }
 
+    /**
+     * 更新任务
+     */
+    public function updateTask()
+    {
+        $task = input('post.');
+        if(!isset($task['call_multiple']) || !isset($task['notify_sms']) || !isset($task['recall_count']) || !isset($task['task_id'])){
+            return json_encode(['code'=>101,'info'=>'参数缺失','data'=>null]);
+        }
+        try{
+            Db::table('sys_call_case_task')->where('id',$task['task_id'])->update(['call_multiple'=>$task['call_multiple'],'notify_sms'=>$task['notify_sms'],'recall_count'=>$task['recall_count']]);
+            return json_encode(['code'=>200,'info'=>'修改成功','data'=>null]);
+        }catch (Exception $e){
+            return json_encode(['code'=>101,'info'=>$e->getMessage(),'data'=>null]);
+        }
+    }
+
+    /**
+     * 获取任务进度
+     * @return false|string
+     * @throws \think\db\exception\DataNotFoundException
+     * @throws \think\db\exception\ModelNotFoundException
+     * @throws \think\exception\DbException
+     */
+    public function getCompletion()
+    {
+        $task_id = input('task_id');
+        $completion = Db::table('sys_call_case_task')->where(['id'=>$task_id])->field('completion')->find();
+        if(empty($completion)){
+            return json_encode(['code'=>101,'info'=>'当前任务不存在','data'=>null]);
+        }else{
+            return json_encode(['code'=>200,'info'=>'修改成功','data'=>$completion]);
+        }
+    }
+
+    /**
+     * 获取案例列表
+     * @return false|string
+     */
+    public function getCaseList()
+    {
+        try{
+            $id = input('id');
+            $page = empty(input('page')) ? 1 : input('page');
+            $page_size = 50;
+            $task_id = [];
+            if(!empty($id)) {
+                $task_id = ['task_id'=>$id];
+            }
+            $case = Db::table('sys_call_case case')->where($task_id)->join('sys_call_case_task task','task.id=case.task_id','right')->field('case.phone,case.extend_id,case.case_message,case.status,case.call_duration,case.call_count,case.add_time,task.id,task.name')->limit(($page-1)*$page_size,$page_size)->select();
+            return json_encode(['code'=>200,'info'=>'success','data'=>$case]);
+        }catch (Exception $e){
+            return json_encode(['code'=>101,'info'=>$e->getMessage(),'data'=>null]);
+        }
+    }
     /**
      * 根据任务上传案例
      * @return false|string
