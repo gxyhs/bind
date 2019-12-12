@@ -10,6 +10,16 @@ Class Task
     public function __construct()
     {
         $this->channel = new Channel();
+        $token = input('token');
+        $info = explode('+',$token);
+        try{
+            $account = db('channel_user')->where(['secret_key'=>$info[0],'secret_token'=>$info[1]])->field('id')->find();
+            if(empty($account)){
+                exit(json_encode(['code'=>101,'info'=>'账号不存在','data'=>null]));
+            }
+        }catch (Exception $e){
+                exit(json_encode(['code'=>101,'info'=>'参数验证失败','data'=>null]));
+        }
     }
 
     /**
@@ -21,13 +31,6 @@ Class Task
         try{
             $call_soft = explode(',',input('post.call_soft'));
             $softphone_count = count($call_soft);
-            $account = Db::table('sys_channel_user')->where(['id'=>input('post.channel_id')])->field('account,password')->find();
-            if(empty($account)){
-                return json_encode(['code'=>101,'info'=>'账号不存在','data'=>null]);
-            }
-            if(input('post.token') != $account['account'].'+'.$account['password']){
-                return json_encode(['code'=>101,'info'=>'验证失败','data'=>null]);
-            }
             $data = [
                 'name' => input('post.name'),
                 'channel_id' => input('post.channel_id'),
