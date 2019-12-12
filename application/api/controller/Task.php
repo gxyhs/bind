@@ -69,7 +69,8 @@ Class Task
         if(empty($completion)){
             return json_encode(['code'=>101,'info'=>'当前任务不存在','data'=>null]);
         }else{
-            return json_encode(['code'=>200,'info'=>'修改成功','data'=>$completion]);
+            $completion['completion'] = $completion['completion'].'%';
+            return json_encode(['code'=>200,'info'=>'success','data'=>$completion]);
         }
     }
 
