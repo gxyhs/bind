@@ -3,6 +3,7 @@ namespace app\api\controller;
 use app\admin\controller\Channel;
 use think\Exception;
 use think\Db;
+use app\Common\Model\CallCaseModel;
 
 Class Task
 {
@@ -117,7 +118,8 @@ Class Task
             if(!isset($file['excel'])){
                 return $this->error('没有呼叫案列上传');
             }
-            $call_case_count = $this->channel->excel($file['excel'],$task_id);
+            $account = db('channel_user')->where(['secret_key'=>input('secret_key'),'secret_token'=>input('secret_token')])->field('id')->find();
+            $call_case_count = $this->excel($file['excel'],$task_id,$account['id']);
             //更新呼叫数量
             Db::table('sys_call_case_task')->where('id',$task_id)->update(['call_case_count'=>$call_case_count]);
             return json_encode(['code'=>200,'info'=>'success','data'=>null]);
@@ -125,7 +127,29 @@ Class Task
             return json_encode(['code'=>101,'info'=>$e->getMessage(),'data'=>null]);
         }
     }
+    //导入excel
+    public function excel($file,$id,$channel_uid){
+        $res = leading_in($file);
 
+	    $data = [];
+        foreach($res as $k=>$v){
+            if(!empty($v['phone'])){
+               // $this->error('empty phone',url('channel/add_call_case_softphone'));
+                $data[$k]['extend_id'] = $v['extend_id'];
+                $data[$k]['case_message']= $v['case_message'];
+                $data[$k]['channel_id'] = $channel_uid;
+                $data[$k]['add_time'] = date('Y-m-d H:i:s');
+                $data[$k]['task_id'] = $id;
+                $data[$k]['phone'] = $v['phone'];
+            }
+        }
+        $this->CallCase = new CallCaseModel();
+        $chunk_result = array_chunk($data, 1000);
+        foreach($chunk_result as $value){
+            $result = $this->CallCase->insertAll($value);
+        }
+        return count($data);
+    }
     /**
      * 任务暂停/开始
      * @return false|string
