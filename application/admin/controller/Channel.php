@@ -520,12 +520,21 @@ class Channel extends ChannelBaseController
         $where = ['id'=>input('get.id')];
         $where2 = ['task_id'=>input('get.id')];
         $id = Db::table('sys_call_case_task')->where($where)->field('name')->find();
-        if(input('get.call') != ''){
+        if(input('get.call') != '' && is_numeric(input('get.call')) && in_array(input('get.call'),[0,1,2])){
             $where2['status'] = input('get.call');
+        }else{
+            return 'Request error';
         }
         $list = $this->CallCase->field('phone,extend_id,case_message,status,call_duration,call_count,add_time')->where($where2)->order('add_time desc')->select();
         foreach($list as $k=>$v){
             $list[$k]['name']=$id['name'];
+            if($v['status'] == 0){
+                $list[$k]['status'] = '未呼叫';
+            }elseif($v['status'] == 2){
+                $list[$k]['status'] = '已呼叫';
+            }elseif($v['status'] == 1){
+                $list[$k]['status'] = '呼叫中';
+            }
         }
         $list = $this->object_array($list);
         $head = ['电话','扩展id','描述','呼叫状态','通话时长','呼叫数量','addtime','任务名称'];
