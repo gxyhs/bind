@@ -522,8 +522,6 @@ class Channel extends ChannelBaseController
         $id = Db::table('sys_call_case_task')->where($where)->field('name')->find();
         if(input('get.call') != '' && is_numeric(input('get.call')) && in_array(input('get.call'),[0,1,2])){
             $where2['status'] = input('get.call');
-        }else{
-            return 'Request error';
         }
         $list = $this->CallCase->field('phone,extend_id,case_message,status,call_duration,call_count,add_time')->where($where2)->order('add_time desc')->select();
         foreach($list as $k=>$v){
