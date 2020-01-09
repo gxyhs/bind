@@ -30,6 +30,11 @@ Class Task
     public function newTask()
     {
         try{
+            $name = input('post.name');
+            $channel_id = input('post.channel_id');
+            if(!isset($name) || !isset($channel_id)){
+                return json_encode(['code'=>101,'info'=>'参数错误']);
+            }
             $call_soft = explode(',',input('post.call_soft'));
             $softphone_count = count($call_soft);
             $account = db('channel_user')->where(['secret_key'=>input('secret_key'),'secret_token'=>input('secret_token')])->field('id')->find();
