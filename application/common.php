@@ -138,9 +138,10 @@ require $rootPath.'extend/PHPExcel/PHPExcel.php';
  * @throws \PHPExcel_Reader_Exception
  */
  function leading_in($file){
-
+    
     // 移动到框架应用根目录/public/uploads/ 目录下
-     $info = $file->validate(['size'=>1048576,'ext'=>'xls,xlsx'])->move( '/data/upload');
+    // header('Content-type: text/html; charset=utf-8');
+     $info = $file->validate(['size'=>686743000,'ext'=>'xls,xlsx'])->move( '/data/upload');
     if ($info) {
         $fileName = $info->getSaveName();
         //获取文件路径
@@ -156,7 +157,10 @@ require $rootPath.'extend/PHPExcel/PHPExcel.php';
         }else{
             return '文件类型错误';
         }
+        // $cacheMethod = PHPExcel_CachedObjectStorageFactory::cache_in_memory_gzip;
+        // PHPExcel_Settings::setCacheStorageMethod($cacheMethod);
         $objPHPExcel = $objReader->load($filePath, $encode = 'utf-8'); //获取excel文件
+        
         $sheet = $objPHPExcel->getSheet(0); //激活当前的表
         $highestRow = $sheet->getHighestRow(); // 取得总行数
         $highestColumn = $sheet->getHighestColumn(); // 取得总列数

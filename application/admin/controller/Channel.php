@@ -390,6 +390,11 @@ class Channel extends ChannelBaseController
         $this->redirect('Channel/call_case_softphone');
     }
     public function add_call_case_softphone_ajax(){
+        //ob_start(); // 开启大小无限制的缓冲区
+        // ob_clean();// ob_flush() // 清空/冲出 当前缓冲区
+        // ob_get_contents(); // 获取 当前缓冲区的内容
+        // ob_end_clean();
+        set_time_limit(0);
         Db::startTrans();
         try{
             // if(empty(input('name'))){

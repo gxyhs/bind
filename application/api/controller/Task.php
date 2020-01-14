@@ -32,7 +32,7 @@ Class Task
         try{
             $name = input('post.name');
             $channel_id = input('post.channel_id');
-            if(!isset($name) || !isset($channel_id)){
+            if(!isset($name)){
                 return json_encode(['code'=>101,'info'=>'参数错误']);
             }
             $call_soft = explode(',',input('post.call_soft'));
