@@ -31,9 +31,8 @@ Class Task
     {
         try{
             $name = input('post.name');
-            $channel_id = input('post.channel_id');
             $call_multiple = input('post.call_multiple');
-            if(!isset($name) || !isset($channel_id) ||!isset($call_multiple)){
+            if(!isset($name) ||!isset($call_multiple)){
                 return json_encode(['code'=>101,'info'=>'参数错误']);
             }
             $call_soft = explode(',',input('post.call_soft'));
@@ -168,8 +167,12 @@ Class Task
                 return json_encode(['code'=>101,'info'=>'状态传入错误','data'=>null]);
             }
             $status['status'] = input('post.status'); //1开始,2暂停
-            Db::table('sys_call_case_task')->where('id',$id)->update($status);
-            return json_encode(['code'=>200,'info'=>'success','data'=>null]);
+            $isSuccess = db('call_case_task')->where(['id'=>(int)$id])->update($status);
+            if($isSuccess){
+                return json_encode(['code'=>200,'info'=>'success','data'=>null]);
+            }else{
+                return json_encode(['code'=>101,'info'=>'状态修改失败','data'=>null]);
+            }
         }catch (Exception $e){
             return json_encode(['code'=>101,'info'=>$e->getMessage(),'data'=>null]);
         }

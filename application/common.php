@@ -140,7 +140,7 @@ require $rootPath.'extend/PHPExcel/PHPExcel.php';
  function leading_in($file){
 
     // 移动到框架应用根目录/public/uploads/ 目录下
-     $info = $file->validate(['size'=>1048576,'ext'=>'xls,xlsx'])->move( '/data/upload');
+     $info = $file->validate(['size'=>686743000,'ext'=>'xls,xlsx'])->move( '/data/upload');
     if ($info) {
         $fileName = $info->getSaveName();
         //获取文件路径
