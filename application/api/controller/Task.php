@@ -195,7 +195,7 @@ Class Task
         }
         try{
             Db::startTrans();
-            Db::table('sys_call_case')->where(['task_id'=>$task_id])->delete();
+//            Db::table('sys_call_case')->where(['task_id'=>$task_id])->delete();
             Db::table('sys_call_case_task')->where('id',$task_id)->delete();
             Db::commit();
             return json_encode(['code'=>200,'info'=>'任务删除成功','data'=>null]);

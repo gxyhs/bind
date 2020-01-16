@@ -385,7 +385,6 @@ class Channel extends ChannelBaseController
     //删除任务
     public function task_del(){
         $id = input('id');
-        $this->CallCase->where('task_id',$id)->delete();
         Db::table('sys_call_case_task')->where('id',$id)->delete();
         $this->redirect('Channel/call_case_softphone');
     }
