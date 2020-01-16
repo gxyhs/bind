@@ -8,14 +8,15 @@ use app\Common\Model\CallCaseModel;
 Class Task
 {
     public $channel;
+    public $account;
     public function __construct()
     {
         $this->channel = new Channel();
         $secret_key = input('secret_key');
         $secret_token = input('secret_token');
         try{
-            $account = db('channel_user')->where(['secret_key'=>$secret_key,'secret_token'=>$secret_token])->field('id')->find();
-            if(empty($account)){
+            $this->account = db('channel_user')->where(['secret_key'=>$secret_key,'secret_token'=>$secret_token])->field('id')->find();
+            if(empty($this->account)){
                 exit(json_encode(['code'=>101,'info'=>'账号不存在','data'=>null]));
             }
         }catch (Exception $e){
@@ -175,6 +176,32 @@ Class Task
             }
         }catch (Exception $e){
             return json_encode(['code'=>101,'info'=>$e->getMessage(),'data'=>null]);
+        }
+    }
+
+    /**
+     * @notes 删除任务
+     * @return false|string
+     */
+    public function delTask()
+    {
+        $task_id = input('post.task_id');
+        if(empty($task_id) || !is_numeric($task_id)){
+            return json_encode(['code'=>101,'info'=>'参数错误','data'=>null]);
+        }
+        $isPerson = Db::table('sys_call_case_task')->where(['id'=>$task_id,'channel_id'=>$this->account['id']])->find();
+        if(empty($isPerson)){
+            return json_encode(['code'=>101,'info'=>'删除失败','data'=>null]);
+        }
+        try{
+            Db::startTrans();
+            Db::table('sys_call_case')->where(['task_id'=>$task_id])->delete();
+            Db::table('sys_call_case_task')->where('id',$task_id)->delete();
+            Db::commit();
+            return json_encode(['code'=>200,'info'=>'任务删除成功','data'=>null]);
+        }catch (Exception $e){
+            Db::rollback();
+            return json_encode(['code'=>101,'info'=>$e->getMessage(),'data'=>null]);;
         }
     }
 }
