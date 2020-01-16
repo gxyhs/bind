@@ -48,7 +48,7 @@ class Channel extends ChannelBaseController
             if(count($info)){
                 $length = $info['page_length'];
                 $start = $info['page_start'];
-                $list = $this->CallCase->field('id,task_id,phone,extend_id,case_message,status,call_duration,call_count,add_time')->where('channel_id',session('channel_uid'))->where([['extend_id','like',"%".input('search')."%"]])->limit($start,$length)->order('add_time desc')->select();
+                $list = $this->CallCase->field('id,task_id,phone,extend_id,case_message,status,call_duration,call_count,add_time')->where('channel_id',session('channel_uid'))->limit($start,$length)->order('add_time desc')->where([['phone','like',"%".input('search')."%"]])->select();
                 $list = $this->object_array($list);
                 foreach ($list as $k=>$v){
                     $find =  Db::table('sys_call_case_task')->field('id,name')->where('id',$v['task_id'])->find();
@@ -526,7 +526,7 @@ class Channel extends ChannelBaseController
         $where2 = ['task_id'=>input('get.id')];
         $id = Db::table('sys_call_case_task')->where($where)->field('name')->find();
         if(empty($id)){
-            return $this->error('empty task id');
+            return $this->error('task id not exist');
         }
         if(input('get.call') != '' && is_numeric(input('get.call')) && in_array(input('get.call'),[0,1,2])){
             $where2['status'] = input('get.call');
