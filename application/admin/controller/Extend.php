@@ -14,7 +14,7 @@ class Extend extends ChannelBaseController
     public function task_excal(){
         $dbCallCaseTask = new CallCaseTaskModel();
         $dbCallCase = new CallCaseModel();
-        $task = $dbCallCaseTask->where('id',input('task_id'))->field('id,name')->find();
+        $task = $dbCallCaseTask->where(['id'=>input('task_id'),'channel_id'=>session('channel_uid')])->field('id,name')->find();
         if(empty($task)){
             // throw new Exception('empty task id', 1);
             $this->error('empty task id');

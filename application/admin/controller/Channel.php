@@ -522,9 +522,12 @@ class Channel extends ChannelBaseController
         if(empty(input('get.id')) || !is_numeric(input('get.id'))){
             return 'Request error';
         }
-        $where = ['id'=>input('get.id')];
+        $where = ['id'=>input('get.id'),'channel_id'=>session('channel_uid')];
         $where2 = ['task_id'=>input('get.id')];
         $id = Db::table('sys_call_case_task')->where($where)->field('name')->find();
+        if(empty($id)){
+            return $this->error('empty task id');
+        }
         if(input('get.call') != '' && is_numeric(input('get.call')) && in_array(input('get.call'),[0,1,2])){
             $where2['status'] = input('get.call');
         }
