@@ -547,7 +547,7 @@ class Channel extends ChannelBaseController
         if(input('get.call') != '' && is_numeric(input('get.call')) && in_array(input('get.call'),[0,1,2])){
             $where2['status'] = input('get.call');
         }
-        $list = $this->CallCase->field('phone,extend_id,case_message,status,call_duration,call_count,add_time')->where($where2)->order('add_time desc')->select();
+        $list = $this->CallCase->field('task_id,phone,extend_id,recording_file,case_message,status,call_duration,call_count,add_time,call_time')->where($where2)->order('add_time desc')->select();
         foreach($list as $k=>$v){
             $list[$k]['name']=$id['name'];
             if($v['status'] == 0){
@@ -557,9 +557,20 @@ class Channel extends ChannelBaseController
             }elseif($v['status'] == 1){
                 $list[$k]['status'] = '呼叫中';
             }
+            if($v['recording_file']){
+                $startTime = strtotime(date("Y-m-d"),time());
+                $endTime = $startTime+24*3600;
+                $recording_file = strtotime($v['call_time']);
+                if($startTime < $recording_file){
+                    $list[$k]['recording_file'] = '<audio controls="controls"><source src="'.$this->callTimeUrl.$v['recording_file'].'" type="audio/mp3"></audio>';
+                }else{
+                    $list[$k]['recording_file'] = '<audio controls="controls"><source src="'.$this->callUrl.$v['recording_file'].'" type="audio/mp3"></audio>';
+                }
+            }
+            unset($v['call_time']);
         }
         $list = $this->object_array($list);
-        $head = ['电话','扩展id','描述','呼叫状态','通话时长','呼叫数量','addtime','任务名称'];
+        $head = ['任务id','电话','扩展id','录音','描述','呼叫状态','通话时长','呼叫数量','addtime','任务名称'];
         leading_out($list,$head,date('YmdHis',time()).'_task_case');
     }
 }

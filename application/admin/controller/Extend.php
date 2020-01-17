@@ -19,8 +19,8 @@ class Extend extends ChannelBaseController
             // throw new Exception('empty task id', 1);
             $this->error('task id not exist');
         }
-        $data = $dbCallCase->where('task_id',input('task_id'))->field('task_id,phone,extend_id,case_message,softphone,call_duration,call_time,status')->select();
-        $head = ['task_id','phone','extend_id','case_message','softphone','call_duration','call_time','status'];
+        $data = $dbCallCase->where('task_id',input('task_id'))->field('task_id,phone,extend_id,recording_file,case_message,softphone,call_duration,call_time,status')->select();
+        $head = ['task_id','phone','extend_id','recording_file','case_message','softphone','call_duration','call_time','status'];
         $name = $task['name'];
         $data = $this->object_array($data);
         return leading_out($data,$head,$name);
