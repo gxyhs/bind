@@ -27,6 +27,8 @@ class Channel extends ChannelBaseController
         $this->CallCase = new CallCaseModel();
         $this->CallSoftphone = new CallSoftphoneModel();
         $this->Statistical = new StatisticalModel();
+        $this->callTimeUrl = "http://149.129.237.184:8088/download/";
+        $this->callUrl = "https://cs-recording.oss-ap-southeast-5.aliyuncs.com/";
         $this->status = [
             lang('offline'),
             lang('online'),
@@ -48,7 +50,7 @@ class Channel extends ChannelBaseController
             if(count($info)){
                 $length = $info['page_length'];
                 $start = $info['page_start'];
-                $list = $this->CallCase->field('id,task_id,phone,extend_id,case_message,status,call_duration,call_count,add_time')->where('channel_id',session('channel_uid'))->limit($start,$length)->order('add_time desc')->where([['phone','like',"%".input('search')."%"]])->select();
+                $list = $this->CallCase->field('id,task_id,phone,extend_id,recording_file,case_message,status,call_duration,call_count,add_time')->where('channel_id',session('channel_uid'))->limit($start,$length)->order('add_time desc')->where([['phone','like',"%".input('search')."%"]])->select();
                 $list = $this->object_array($list);
                 foreach ($list as $k=>$v){
                     $find =  Db::table('sys_call_case_task')->field('id,name')->where('id',$v['task_id'])->find();
@@ -57,6 +59,18 @@ class Channel extends ChannelBaseController
                     $list[$k]['id'] = '<input type="checkbox" class="ids" id="'.$v['id'].'" task_id="'.$v['task_id'].'">';
                     $call_param = $v['id'].','.$v['task_id'];
                     $list[$k][] = $this->bt_onclick('call_del',$call_param,lang('delete'));
+                    if($v['recording_file']){
+                        $startTime = strtotime(date("Y-m-d"),time());
+                        $endTime = $startTime+24*3600;
+                        $recording_file = strtotime($v['recording_file']);
+                        if($startTime < $recording_file && $recording_file < $endTime){
+                            $list[$k]['recording_file'] = '<audio controls="controls"><source src="'.$this->callTimeUrl.$v['recording_file'].'" type="audio/mp3"></audio>';
+                        }else{
+                            //$list[$k]['recording_file'] = $this->callUrl.$v['recording_file'];
+                            $list[$k]['recording_file'] = '<audio controls="controls"><source src="'.$this->callUrl.$v['recording_file'].'" type="audio/mp3"></audio>';
+                            //"https://cs-recording.oss-ap-southeast-5.aliyuncs.com/20200116/01af22f5-51a5-45ae-a5c2-6a6ddd5ef378.wav";
+                        }
+                    }
                 }
                 $count = $this->CallCase->where('channel_id',session('channel_uid'))->where([['extend_id','like',"%".input('search')."%"]])->order('add_time desc')->count();
                 $data =  $this->show_paging_info($info['page_echo'],$count,$list);

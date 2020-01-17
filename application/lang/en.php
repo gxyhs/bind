@@ -81,6 +81,8 @@ return [
     'caller_prefix' => 'caller prefix',
     'is_bulk' => 'Batch add or not',
     'batch_addition_quantity' => 'Batch addition quantity',
+
+    'sound_recording' => 'Sound recording',
 ];
 
 ?>

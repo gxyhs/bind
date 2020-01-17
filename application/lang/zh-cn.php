@@ -83,6 +83,8 @@ return [
     'caller_prefix' => '呼叫前缀',
     'is_bulk' => '是否批量添加',
     'batch_addition_quantity' => '批量添加数量',
+
+    'sound_recording' => '录音',
 ];
 
 ?>
