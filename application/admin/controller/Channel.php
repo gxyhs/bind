@@ -290,8 +290,10 @@ class Channel extends ChannelBaseController
                         $str = $this->bt_onclick('start',$v['id'],lang('stop'));
                     }elseif($v['status'] == 0){
                         $str = $this->bt_onclick('start',$v['id'],lang('start'));
-                    }elseif($v['status'] == 2){
+                    }elseif($v['status'] == 3){
                         $str = $this->bt_onclick('start',$v['id'],lang('start_again'));
+                    }elseif($v['status'] == 2){
+                        $str = $this->bt_onclick('start',$v['id'],lang('task_continue'));
                     }else{
                         $str = '';
                     }

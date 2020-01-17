@@ -65,6 +65,7 @@ return [
     'last_call_time' => '最后一次呼叫',
     'notify_sms' => '短信内容',
 
+    'task_continue' => '继续呼叫',
     'start' => '点击开始',
     'stop' => '点击暂停',
     'start_again' => '重新开始',

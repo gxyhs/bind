@@ -65,6 +65,7 @@ return [
     'last_call_time' => 'Panggilan terakhir',
     'notify_sms' => 'Isi SMS',
 
+    'task_continue' => 'Continue calling',
     'start' => 'Klik mulai',
     'stop' => 'Klik',
     'start_again' => 'Mulai dari awal',

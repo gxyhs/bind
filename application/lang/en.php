@@ -63,6 +63,7 @@ return [
     'last_call_time'=>'Final call',
     'notify_sms' => 'Message content',
 
+    'task_continue' => 'Continue calling',
     'start' => 'Click on the start',
     'stop' => 'Click on the pause',
     'start_again' => 'Start all over again',
