@@ -38,10 +38,9 @@ Class Task
             }
             $call_soft = explode(',',input('post.call_soft'));
             $softphone_count = count($call_soft);
-            $account = db('channel_user')->where(['secret_key'=>input('secret_key'),'secret_token'=>input('secret_token')])->field('id')->find();
             $data = [
                 'name' => input('post.name'),
-                'channel_id' => $account['id'],
+                'channel_id' => $this->account['id'],
                 'softphone_count' => $softphone_count,
                 'call_multiple' => input('post.call_multiple'),
                 'recall_count' => input('post.recall_count'),
@@ -66,8 +65,12 @@ Class Task
             return json_encode(['code'=>101,'info'=>'参数缺失','data'=>null]);
         }
         try{
-            Db::table('sys_call_case_task')->where('id',$task['task_id'])->update(['call_multiple'=>$task['call_multiple'],'notify_sms'=>$task['notify_sms'],'recall_count'=>$task['recall_count']]);
-            return json_encode(['code'=>200,'info'=>'修改成功','data'=>null]);
+            $update_success = Db::table('sys_call_case_task')->where(['id'=>$task['task_id'],'channel_id'=>$this->account['id']])->update(['call_multiple'=>$task['call_multiple'],'notify_sms'=>$task['notify_sms'],'recall_count'=>$task['recall_count']]);
+            if($update_success){
+                return json_encode(['code'=>200,'info'=>'修改成功','data'=>null]);
+            }else{
+                return json_encode(['code'=>101,'info'=>'修改失败 ','data'=>null]);
+            }
         }catch (Exception $e){
             return json_encode(['code'=>101,'info'=>$e->getMessage(),'data'=>null]);
         }
@@ -83,7 +86,7 @@ Class Task
     public function getCompletion()
     {
         $task_id = input('task_id');
-        $completion = Db::table('sys_call_case_task')->where(['id'=>$task_id])->field('completion')->find();
+        $completion = Db::table('sys_call_case_task')->where(['id'=>$task_id,'channel_id'=>$this->account['id']])->field('completion')->find();
         if(empty($completion)){
             return json_encode(['code'=>101,'info'=>'当前任务不存在','data'=>null]);
         }else{
@@ -106,6 +109,7 @@ Class Task
             if(!empty($id)) {
                 $task_id = ['task_id'=>$id];
             }
+            $task_id['task.channel_id'] = $this->account['id'];
             $case = Db::table('sys_call_case case')->where($task_id)->join('sys_call_case_task task','task.id=case.task_id','right')->field('case.phone,case.extend_id,case.case_message,case.status,case.call_duration,case.call_count,case.add_time,task.id,task.name')->limit(($page-1)*$page_size,$page_size)->select();
             return json_encode(['code'=>200,'info'=>'success','data'=>$case]);
         }catch (Exception $e){
@@ -124,8 +128,11 @@ Class Task
             if(!isset($file['excel'])){
                 return $this->error('没有呼叫案列上传');
             }
-            $account = db('channel_user')->where(['secret_key'=>input('secret_key'),'secret_token'=>input('secret_token')])->field('id')->find();
-            $call_case_count = $this->excel($file['excel'],$task_id,$account['id']);
+            $task = Db::table('sys_call_case_task')->where(['id'=>$task_id,'channel_id'=>$this->account['id']])->find();
+            if(empty($task)){
+                return json_encode(['code'=>101,'info'=>'当前任务不是你创建的','data'=>null]);
+            }
+            $call_case_count = $this->excel($file['excel'],$task_id,$this->account['id']);
             //更新呼叫数量
             Db::table('sys_call_case_task')->where('id',$task_id)->update(['call_case_count'=>$call_case_count]);
             return json_encode(['code'=>200,'info'=>'success','data'=>null]);
@@ -168,7 +175,7 @@ Class Task
                 return json_encode(['code'=>101,'info'=>'状态传入错误','data'=>null]);
             }
             $status['status'] = input('post.status'); //1开始,2暂停
-            $isSuccess = db('call_case_task')->where(['id'=>(int)$id])->update($status);
+            $isSuccess = db('call_case_task')->where(['id'=>$id,'channel_id'=>$this->account['id']])->update($status);
             if($isSuccess){
                 return json_encode(['code'=>200,'info'=>'success','data'=>null]);
             }else{
