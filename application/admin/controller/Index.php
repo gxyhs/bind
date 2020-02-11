@@ -41,7 +41,29 @@ class Index extends AdminBaseController
         $this->assign('search',input('search'));
         return $this->fetch();
     }
-    
+    public function downTask()
+    {
+        $id = input('get.id');
+        $beginTime = input('get.beginTime');
+        $endTime = input('get.endTime');
+        if(empty($beginTime) && empty($endTime)){
+            $list = $this->CallCase->where(['channel_id'=>$id])->field('id,task_id,phone,softphone,call_count')->select()->toArray();
+        }elseif(empty($beginTime) && empty($endTime)){
+            $beginTime = date('Y-m-d H:i:s',strtotime($beginTime));
+            $endTime = date('Y-m-d H:i:s',strtotime($endTime));
+            $list = $this->CallCase->where(['channel_id'=>$id])->where('add_time','between time',[$beginTime,$endTime])->field('id,task_id,phone,softphone,call_count')->select()->toArray();
+        }else{
+            return '导出失败';
+        }
+        $list = $this->object_array($list);
+        foreach ($list as $k=>$v) {
+            $find =  Db::table('sys_call_case_task')->field('id,name')->where('id',$v['task_id'])->find();
+            $list[$k]['task_id'] = $find['name'];
+            unset($list[$k]['id']);
+        }
+        $title = ['任务昵称','主叫号码','被叫号码','呼叫时长'];
+        leading_out($list,$title,date('YmdHis',time()));
+    }
     public function change_password(){
         if(IS_POST){
             $original = md5(trim($_POST['original_password']));
