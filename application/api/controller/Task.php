@@ -9,11 +9,21 @@ Class Task
 {
     public $channel;
     public $account;
+    public $batch_data;
     public function __construct()
     {
         $this->channel = new Channel();
-        $secret_key = input('secret_key');
-        $secret_token = input('secret_token');
+        if(Request()->action() == 'batchupload'){
+            $this->batch_data = json_decode(input('post.batch_data'),true);
+            if(empty($this->batch_data['secret_key']) || empty($this->batch_data['secret_token'])){
+                exit(json_encode(['code'=>101,'info'=>'json格式错误','data'=>null]));
+            }
+            $secret_key = $this->batch_data['secret_key'];
+            $secret_token = $this->batch_data['secret_token'];
+        }else{
+            $secret_key = input('secret_key');
+            $secret_token = input('secret_token');
+        }
         try{
             $this->account = db('channel_user')->where(['secret_key'=>$secret_key,'secret_token'=>$secret_token])->field('id')->find();
             if(empty($this->account)){
@@ -86,12 +96,14 @@ Class Task
     public function getCompletion()
     {
         $task_id = input('task_id');
-        $completion = Db::table('sys_call_case_task')->where(['id'=>$task_id,'channel_id'=>$this->account['id']])->field('completion')->find();
+        $completion = Db::table('sys_call_case_task')->where(['id'=>$task_id])->field('completion,channel_id')->find();
         if(empty($completion)){
             return json_encode(['code'=>101,'info'=>'当前任务不存在','data'=>null]);
+        }elseif($completion['channel_id'] != $this->account['id']){
+            return json_encode(['code'=>101,'info'=>'当前任务不是你创建的','data'=>null]);
         }else{
-            $completion['completion'] = $completion['completion'].'%';
-            return json_encode(['code'=>200,'info'=>'success','data'=>$completion]);
+            $arr['completion'] = $completion['completion'].'%';
+            return json_encode(['code'=>200,'info'=>'success','data'=>$arr]);
         }
     }
 
@@ -110,9 +122,10 @@ Class Task
                 $task_id = ['task_id'=>$id];
             }
             $task_id['task.channel_id'] = $this->account['id'];
-            $case = Db::table('sys_call_case case')->where($task_id)->join('sys_call_case_task task','task.id=case.task_id','right')->field('case.phone,case.extend_id,case.case_message,case.status,case.call_duration,case.call_count,case.add_time,task.id,task.name')->limit(($page-1)*$page_size,$page_size)->select();
-            $caseCount = Db::table('sys_call_case case')->where($task_id)->join('sys_call_case_task task','task.id=case.task_id','right')->count();
-            return json_encode(['code'=>200,'info'=>'success','data'=>$case,'count'=>$caseCount]);
+            $case['case'] = Db::table('sys_call_case case')->where($task_id)->join('sys_call_case_task task','task.id=case.task_id','right')->field('case.phone,case.extend_id,case.case_message,case.status,case.call_duration,case.call_count,case.add_time,task.id,task.name')->limit(($page-1)*$page_size,$page_size)->select();
+            $case_limit = Db::table('sys_call_case case')->where($task_id)->join('sys_call_case_task task','task.id=case.task_id','right')->field('case.phone,case.extend_id,case.case_message,case.status,case.call_duration,case.call_count,case.add_time,task.id,task.name')->count();
+            $case['total_page'] = ceil($case_limit / $page_size);
+            return json_encode(['code'=>200,'info'=>'success','data'=>$case]);
         }catch (Exception $e){
             return json_encode(['code'=>101,'info'=>$e->getMessage(),'data'=>null]);
         }
@@ -209,7 +222,23 @@ Class Task
             return json_encode(['code'=>200,'info'=>'任务删除成功','data'=>null]);
         }catch (Exception $e){
             Db::rollback();
-            return json_encode(['code'=>101,'info'=>$e->getMessage(),'data'=>null]);;
+            return json_encode(['code'=>101,'info'=>$e->getMessage(),'data'=>null]);
+        }
+    }
+    public function batchUpload()
+    {
+        if(count($this->batch_data['call_case']) > 1000 || !isset($this->batch_data['call_case'])){
+            return json_encode(['code'=>101,'info'=>'失败','data'=>null]);
+        }
+        $data = ['channel_id'=>$this->account['id'],'add_time'=>date('Y-m-d H:i:s',time()),'task_id'=>$this->batch_data['task_id']];
+        array_walk($this->batch_data['call_case'], function (&$value, $key, $data) {
+            $value = array_merge($value, $data);
+        }, $data);
+        $upload = Db::table('sys_call_case')->insertAll($this->batch_data['call_case']);
+        if($upload){
+            return json_encode(['code'=>200,'info'=>'批量上传成功','data'=>null]);
+        }else{
+            return json_encode(['code'=>200,'info'=>'批量上传失败','data'=>null]);
         }
     }
 }
