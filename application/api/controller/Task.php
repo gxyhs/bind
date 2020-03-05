@@ -15,16 +15,16 @@ Class Task
         $this->channel = new Channel();
         if(Request()->action() == 'batchupload'){
             $this->batch_data = input('call_case');
-            if(empty($this->batch_data)){
-                exit(json_encode(['code'=>101,'info'=>'json格式错误','data'=>null]));
-            }
+            // if(empty($this->batch_data)){
+            //     exit(json_encode(['code'=>101,'info'=>'json格式错误','data'=>null]));
+            // }
         }
         $secret_key = input('secret_key');
         $secret_token = input('secret_token');
         try{
             $this->account = db('channel_user')->where(['secret_key'=>$secret_key,'secret_token'=>$secret_token])->field('id')->find();
             if(empty($this->account)){
-                exit(json_encode(['code'=>101,'info'=>'账号不存在','data'=>null]));
+                exit(json_encode(['code'=>101,'info'=>'Account does not exist','data'=>null]));
             }
         }catch (Exception $e){
                 exit(json_encode(['code'=>101,'info'=>'参数验证失败','data'=>null]));
