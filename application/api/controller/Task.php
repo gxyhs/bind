@@ -230,6 +230,10 @@ Class Task
         if(count($this->batch_data['call_case']) > 1000 || !isset($this->batch_data['call_case'])){
             return json_encode(['code'=>101,'info'=>'失败','data'=>null]);
         }
+        $is_task_exist = Db::table('sys_call_case_task')->where(['id'=>$this->batch_data['task_id']])->find();
+        if(empty($is_task_exist)){
+            return json_encode(['code'=>101,'info'=>'当前任务不存在','data'=>null]);
+        }
         $data = ['channel_id'=>$this->account['id'],'add_time'=>date('Y-m-d H:i:s',time()),'task_id'=>$this->batch_data['task_id']];
         array_walk($this->batch_data['call_case'], function (&$value, $key, $data) {
             $value = array_merge($value, $data);
