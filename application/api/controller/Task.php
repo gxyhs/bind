@@ -14,16 +14,13 @@ Class Task
     {
         $this->channel = new Channel();
         if(Request()->action() == 'batchupload'){
-            $this->batch_data = json_decode(input('post.'),true);
-            if(empty($this->batch_data['secret_key']) || empty($this->batch_data['secret_token'])){
+            $this->batch_data = json_decode(input('post.call_case'),true);
+            if(empty($this->batch_data)){
                 exit(json_encode(['code'=>101,'info'=>'json格式错误','data'=>null]));
             }
-            $secret_key = $this->batch_data['secret_key'];
-            $secret_token = $this->batch_data['secret_token'];
-        }else{
-            $secret_key = input('secret_key');
-            $secret_token = input('secret_token');
         }
+        $secret_key = input('secret_key');
+        $secret_token = input('secret_token');
         try{
             $this->account = db('channel_user')->where(['secret_key'=>$secret_key,'secret_token'=>$secret_token])->field('id')->find();
             if(empty($this->account)){
@@ -227,18 +224,18 @@ Class Task
     }
     public function batchUpload()
     {
-        if(count($this->batch_data['call_case']) > 1000 || !isset($this->batch_data['call_case'])){
+        if(count($this->batch_data) > 1000 || !isset($this->batch_data)){
             return json_encode(['code'=>101,'info'=>'失败','data'=>null]);
         }
-        $is_task_exist = Db::table('sys_call_case_task')->where(['id'=>$this->batch_data['task_id'],'channel_id'=>$this->account['id']])->find();
+        $is_task_exist = Db::table('sys_call_case_task')->where(['id'=>input('task_id'),'channel_id'=>$this->account['id']])->find();
         if(empty($is_task_exist)){
             return json_encode(['code'=>101,'info'=>'当前任务不存在','data'=>null]);
         }
-        $data = ['channel_id'=>$this->account['id'],'add_time'=>date('Y-m-d H:i:s',time()),'task_id'=>$this->batch_data['task_id']];
-        array_walk($this->batch_data['call_case'], function (&$value, $key, $data) {
+        $data = ['channel_id'=>$this->account['id'],'add_time'=>date('Y-m-d H:i:s',time()),'task_id'=>input('task_id');
+        array_walk($this->batch_data, function (&$value, $key, $data) {
             $value = array_merge($value, $data);
         }, $data);
-        $upload = Db::table('sys_call_case')->insertAll($this->batch_data['call_case']);
+        $upload = Db::table('sys_call_case')->insertAll($this->batch_data);
         if($upload){
             return json_encode(['code'=>200,'info'=>'批量上传成功','data'=>null]);
         }else{
