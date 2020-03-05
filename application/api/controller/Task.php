@@ -14,7 +14,7 @@ Class Task
     {
         $this->channel = new Channel();
         if(Request()->action() == 'batchupload'){
-            $this->batch_data = json_decode(input('post.call_case'),true);
+            $this->batch_data = input('call_case');
             if(empty($this->batch_data)){
                 exit(json_encode(['code'=>101,'info'=>'json格式错误','data'=>null]));
             }
@@ -229,9 +229,9 @@ Class Task
         }
         $is_task_exist = Db::table('sys_call_case_task')->where(['id'=>input('task_id'),'channel_id'=>$this->account['id']])->find();
         if(empty($is_task_exist)){
-            return json_encode(['code'=>101,'info'=>'当前任务不存在','data'=>null]);
+            return json_encode(['code'=>101,'info'=>'Current task does not exist','data'=>null]);
         }
-        $data = ['channel_id'=>$this->account['id'],'add_time'=>date('Y-m-d H:i:s',time()),'task_id'=>input('task_id');
+        $data = ['channel_id'=>$this->account['id'],'add_time'=>date('Y-m-d H:i:s',time()),'task_id'=>input('task_id')];
         array_walk($this->batch_data, function (&$value, $key, $data) {
             $value = array_merge($value, $data);
         }, $data);
