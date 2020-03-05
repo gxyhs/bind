@@ -122,10 +122,9 @@ Class Task
                 $task_id = ['task_id'=>$id];
             }
             $task_id['task.channel_id'] = $this->account['id'];
-            $case['case'] = Db::table('sys_call_case case')->where($task_id)->join('sys_call_case_task task','task.id=case.task_id','right')->field('case.phone,case.extend_id,case.case_message,case.status,case.call_duration,case.call_count,case.add_time,task.id,task.name')->limit(($page-1)*$page_size,$page_size)->select();
-            $case_limit = Db::table('sys_call_case case')->where($task_id)->join('sys_call_case_task task','task.id=case.task_id','right')->field('case.phone,case.extend_id,case.case_message,case.status,case.call_duration,case.call_count,case.add_time,task.id,task.name')->count();
-            $case['total_page'] = ceil($case_limit / $page_size);
-            return json_encode(['code'=>200,'info'=>'success','data'=>$case]);
+            $case = Db::table('sys_call_case case')->where($task_id)->join('sys_call_case_task task','task.id=case.task_id','right')->field('case.phone,case.extend_id,case.case_message,case.status,case.call_duration,case.call_count,case.add_time,task.id,task.name')->limit(($page-1)*$page_size,$page_size)->select();
+            $caseCount = Db::table('sys_call_case case')->where($task_id)->join('sys_call_case_task task','task.id=case.task_id','right')->count();
+            return json_encode(['code'=>200,'info'=>'success','data'=>$case,'count'=>$caseCount]);
         }catch (Exception $e){
             return json_encode(['code'=>101,'info'=>$e->getMessage(),'data'=>null]);
         }
