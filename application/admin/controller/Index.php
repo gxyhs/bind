@@ -48,7 +48,7 @@ class Index extends AdminBaseController
         $endTime = input('get.endTime');
         if(empty($beginTime) && empty($endTime)){
             $list = $this->CallCase->where(['channel_id'=>$id])->field('id,task_id,phone,softphone,call_count')->select()->toArray();
-        }elseif(empty($beginTime) && empty($endTime)){
+        }elseif(!empty($beginTime) && !empty($endTime)){
             $beginTime = date('Y-m-d H:i:s',strtotime($beginTime));
             $endTime = date('Y-m-d H:i:s',strtotime($endTime));
             $list = $this->CallCase->where(['channel_id'=>$id])->where('add_time','between time',[$beginTime,$endTime])->field('id,task_id,phone,softphone,call_count')->select()->toArray();
