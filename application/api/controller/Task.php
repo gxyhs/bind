@@ -14,7 +14,7 @@ Class Task
     {
         $this->channel = new Channel();
         if(Request()->action() == 'batchupload'){
-            $this->batch_data = json_decode(input('post.batch_data'),true);
+            $this->batch_data = json_decode(input('post.'),true);
             if(empty($this->batch_data['secret_key']) || empty($this->batch_data['secret_token'])){
                 exit(json_encode(['code'=>101,'info'=>'json格式错误','data'=>null]));
             }
