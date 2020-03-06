@@ -239,7 +239,7 @@ Class Task
         if($upload){
             return json_encode(['code'=>200,'info'=>'批量上传成功','data'=>null]);
         }else{
-            return json_encode(['code'=>200,'info'=>'批量上传失败','data'=>null]);
+            return json_encode(['code'=>101,'info'=>'批量上传失败','data'=>null]);
         }
     }
 }
