@@ -198,12 +198,14 @@ class Channel extends ChannelBaseController
                 return $data;
             }
         }
+
         $this->assign('search',input('search'));
         $this->assign('status_key',input('status'));
         $this->assign('status',$this->status);
         $userList = $this->channelUser->field('id,account')->select();
         $this->assign('userList', $this->object_array($userList));
         //话机在线数量
+
         $where['channel_id'] = session('channel_uid');
         $where['status'] = 1;
         $telCount = $this->softphone->where($where)->count();
@@ -541,13 +543,13 @@ class Channel extends ChannelBaseController
         $where = ['id'=>input('get.id'),'channel_id'=>session('channel_uid')];
         $where2 = ['task_id'=>input('get.id')];
         $id = Db::table('sys_call_case_task')->where($where)->field('name')->find();
-        if(empty($id)){
+        /*if(empty($id)){
             return $this->error('task id not exist');
-        }
+        }*/
         if(input('get.call') != '' && is_numeric(input('get.call')) && in_array(input('get.call'),[0,1,2])){
             $where2['status'] = input('get.call');
         }
-        $list = $this->CallCase->field('task_id,phone,extend_id,recording_file,case_message,status,call_duration,call_count,add_time,call_time')->where($where2)->order('add_time desc')->select();
+        $list = $this->CallCase->field('task_id,phone,softphone,extend_id,recording_file,case_message,status,call_duration,call_count,add_time,call_time')->where($where2)->order('add_time desc')->select();
         foreach($list as $k=>$v){
             $list[$k]['name']=$id['name'];
             if($v['status'] == 0){
@@ -570,7 +572,7 @@ class Channel extends ChannelBaseController
             unset($v['call_time']);
         }
         $list = $this->object_array($list);
-        $head = ['任务id','电话','扩展id','录音','描述','呼叫状态','通话时长','呼叫数量','addtime','任务名称'];
+        $head = ['任务id','电话','话机接听','扩展id','录音','描述','呼叫状态','通话时长','呼叫数量','addtime','任务名称'];
         leading_out($list,$head,date('YmdHis',time()).'_task_case');
     }
 }
