@@ -28,7 +28,11 @@ class Crontab extends Controller{
                     'task_id' => $v['id'],
                 ];
                 $count = $CallCase->where($crontab)->count();
-                $proportion = round($count / $v['call_case_count'], 2)*100;
+                if(empty($v['call_case_count'])){
+                    $proportion = 0;
+                }else {
+                    $proportion = round($count / $v['call_case_count'], 2) * 100;
+                }
                 $sql .= ' WHEN '.$v['id'].' THEN '.$proportion;
             }
             $sql .= ' END)';

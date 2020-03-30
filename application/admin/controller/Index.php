@@ -41,7 +41,6 @@ class Index extends AdminBaseController
         $this->assign('search',input('search'));
         return $this->fetch();
     }
-    
     public function change_password(){
         if(IS_POST){
             $original = md5(trim($_POST['original_password']));
@@ -193,5 +192,65 @@ class Index extends AdminBaseController
                 $this->error('删除失败');
             }
         }
+    }
+    public function downTask()
+    {
+        $id = input('get.id');
+        if(empty($id)){
+            return 'No user selected';
+        }
+        $beginTime = input('get.beginTime');
+        $endTime = input('get.endTime');
+        if(empty($beginTime) && empty($endTime)){
+            $list = $this->CallCase->where(['channel_id'=>$id])->field('id,task_id,phone,softphone,call_count')->select()->toArray();
+        }elseif(!empty($beginTime) && !empty($endTime)){
+            $beginTime = date('Y-m-d H:i:s',strtotime($beginTime));
+            $endTime = date('Y-m-d H:i:s',strtotime($endTime));
+            $list = $this->CallCase->where(['channel_id'=>$id])->where('add_time','between time',[$beginTime,$endTime])->field('id,task_id,phone,softphone,call_count')->select()->toArray();
+        }else{
+            return '导出失败';
+        }
+        $list = $this->object_array($list);
+        foreach ($list as $k=>$v) {
+            $find =  Db::table('sys_call_case_task')->field('id,name')->where('id',$v['task_id'])->find();
+            $list[$k]['task_id'] = $find['name'];
+            unset($list[$k]['id']);
+        }
+        $title = ['任务昵称','主叫号码','被叫号码','呼叫时长'];
+        $this->exportToExcel(date('YmdHis',time()),$title,$list);
+    }
+    /**
+     * @creator yhs
+     * @data 2020/02/12
+     * @desc 数据导出到excel(csv文件)
+     * @param $filename 导出的csv文件名称 如date("Y年m月j日").'-PB机构列表.csv'
+     * @param array $tileArray 所有列名称
+     * @param array $dataArray 所有列数据
+     */
+    public static function exportToExcel($filename, $tileArray=[], $dataArray=[]){
+        ini_set('memory_limit','10240M');
+        ini_set('max_execution_time',0);
+        ob_end_clean();
+        ob_start();
+        header("Content-Type: text/csv");
+        header("Content-Disposition:filename=".$filename);
+        $fp=fopen('php://output','w');
+        fwrite($fp, chr(0xEF).chr(0xBB).chr(0xBF));
+//        $fp=fopen('D://hello.csv','w');
+        fputcsv($fp,$tileArray);
+        $index = 0;
+        foreach ($dataArray as $item) {
+            if($index==10000){
+                $index=0;
+                ob_flush();
+                flush();
+            }
+            $index++;
+            fputcsv($fp,$item);
+        }
+ 
+        ob_flush();
+        flush();
+        ob_end_clean();
     }
 }
