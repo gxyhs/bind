@@ -11,7 +11,7 @@ return [
     'new_password' => 'New password',
     'confirm_password' => 'Confirm password',
     'password' => 'password',
-
+    'answer_phone'=>'Answer the phone',
     'submit' => 'Submit',
     'cancel' => 'Cancel',
     'edit' => 'modify',

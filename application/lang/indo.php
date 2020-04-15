@@ -12,7 +12,7 @@ return [
     'new_password' => 'Kata sandi baru',
     'confirm_password' => 'Konfirmasikan kata sandi',
     'password' => 'Kata sandi',
-
+    'answer_phone'=>'Jawab teleponnya',
     'submit' => 'Kirim',
     'cancel' => 'Batalkan',
     'edit' => 'Ubah',

@@ -11,7 +11,7 @@ return [
     'original_password' => '原密码',
     'new_password' => '新密码',
     'confirm_password' => '确认密码',
-
+    'answer_phone'=>'接听话机',
     'password' => '密码',
     'submit' => '提交',
     'cancel' => '取消',
