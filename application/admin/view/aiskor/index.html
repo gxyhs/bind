@@ -15,6 +15,11 @@
                 <th>nik</th>
                 <th>mobile</th>
                 <th>name</th>
+                <th>score</th>
+                <th>information_check</th>
+                <th>fraud_ranking</th>
+                <th>telco_ranking</th>
+                <th>credit_history_ranking</th>
             </tr>
         </thead>
         <tbody>
@@ -24,6 +29,11 @@
                <td>{$v.nik}</td>
                <td>{$v.mobile}</td>
                <td>{$v.name}</td>
+               <td>{$v.score}</td>
+               <td>{$v.information_check}</td>
+               <td>{$v.fraud_ranking}</td>
+               <td>{$v.telco_ranking}</td>
+               <td>{$v.credit_history_ranking}</td>
            </tr>
             {/foreach}
             {if(empty($aiskor))}
