@@ -564,9 +564,9 @@ class Channel extends ChannelBaseController
                 $endTime = $startTime+24*3600;
                 $recording_file = strtotime($v['call_time']);
                 if($startTime < $recording_file){
-                    $list[$k]['recording_file'] = '<audio controls="controls"><source src="'.$this->callTimeUrl.$v['recording_file'].'" type="audio/mp3"></audio>';
+                    $list[$k]['recording_file'] = $this->callTimeUrl.$v['recording_file'];
                 }else{
-                    $list[$k]['recording_file'] = '<audio controls="controls"><source src="'.$this->callUrl.$v['recording_file'].'" type="audio/mp3"></audio>';
+                    $list[$k]['recording_file'] = $this->callUrl.$v['recording_file'];
                 }
             }
             unset($v['call_time']);
