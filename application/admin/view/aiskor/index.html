@@ -1,0 +1,38 @@
+<!doctype html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport"
+          content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Document</title>
+</head>
+<body>
+    <table style="width: 100%;text-align: center;">
+        <thead>
+            <tr>
+                <th>id</th>
+                <th>nik</th>
+                <th>mobile</th>
+                <th>name</th>
+            </tr>
+        </thead>
+        <tbody>
+            {foreach $aiskor as $k=>$v}
+           <tr>
+               <td>{$v.id}</td>
+               <td>{$v.nik}</td>
+               <td>{$v.mobile}</td>
+               <td>{$v.name}</td>
+           </tr>
+            {/foreach}
+            {if(empty($aiskor))}
+            <tr>
+                <td>暂无数据</td>
+            </tr>
+            {/if}
+        </tbody>
+    </table>
+    <p style="text-align: center;"><a href="{:url('add')}">添加</a></p>
+</body>
+</html>
