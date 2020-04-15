@@ -27,4 +27,18 @@ Class Aiskor extends Controller
         }
         return redirect(url('add'));
     }
+    //api
+    public function aiskorApi()
+    {
+        try{
+            $data = input('');
+            if(empty($data['nik']) || empty($data['mobile'])){
+                return json(['code'=>101,'info'=>'error,nik or mobile is empty']);
+            }
+            $aiskor = $this->aiskor->where($data)->select();
+        }catch (\Exception $e){
+            return json(['code'=>101,'info'=>'error,'.$e->getError()]);
+        }
+        return json(['code'=>200,'info'=>'success','data'=>$aiskor]);
+    }
 }
