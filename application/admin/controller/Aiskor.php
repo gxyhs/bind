@@ -8,7 +8,7 @@ Class Aiskor extends Controller
     protected $aiskor = null;
     public function initialize()
     {   
-        header('Access-Control-Allow-Origin: http://localhost:8080');
+        header('Access-Control-Allow-Origin: http://web.aiskor.co.id');
         header("Access-Control-Allow-Credentials: true");
         header("Access-Control-Allow-Methods: GET, POST, PATCH, PUT, OPTIONS");
         header("Access-Control-Allow-Headers: Origin, Content-Type, Cookie, X-CSRF-TOKEN, Accept, Authorization, X-XSRF-TOKEN");
@@ -28,21 +28,19 @@ Class Aiskor extends Controller
     public function save()
     {
         $aiskor = input('post.');
+        $this->aiskor->where('1=1')->delete();
         $isSuccess = $this->aiskor->save($aiskor);
-        if($isSuccess){
-            return redirect(url('index'));
-        }
+        // if($isSuccess){
+        //     return redirect(url('index'));
+        // }
         return redirect(url('add'));
     }
     //api
     public function aiskorApi()
     {
+        
         try{
-            $data = input('');print_r($data);die;
-            if(empty($data['nik']) || empty($data['mobile'])){
-                return json(['code'=>101,'info'=>'error,nik or mobile is empty']);
-            }
-            $aiskor = $this->aiskor->where($data)->select();
+            $aiskor = $this->aiskor->order('id desc')->find();
         }catch (\Exception $e){
             return json(['code'=>101,'info'=>'error,'.$e->getError()]);
         }
