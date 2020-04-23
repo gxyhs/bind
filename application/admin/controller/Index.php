@@ -202,20 +202,26 @@ class Index extends AdminBaseController
         $beginTime = input('get.beginTime');
         $endTime = input('get.endTime');
         if(empty($beginTime) && empty($endTime)){
-            $list = $this->CallCase->where(['channel_id'=>$id])->field('id,task_id,phone,softphone,call_count')->select()->toArray();
+            $list = $this->CallCase->alias('a')->join('sys_call_case_task b','a.task_id=b.id')->where(['a.channel_id'=>$id])->field('b.name,a.phone,a.softphone,a.call_count')->select()->toArray();
         }elseif(!empty($beginTime) && !empty($endTime)){
             $beginTime = date('Y-m-d H:i:s',strtotime($beginTime));
             $endTime = date('Y-m-d H:i:s',strtotime($endTime));
-            $list = $this->CallCase->where(['channel_id'=>$id])->where('add_time','between time',[$beginTime,$endTime])->field('id,task_id,phone,softphone,call_count')->select()->toArray();
+            $list = $this->CallCase->alias('a')->join('sys_call_case_task b','a.task_id=b.id')->where(['a.channel_id'=>$id])->where('a.add_time','between time',[$beginTime,$endTime])->field('b.name,a.phone,a.softphone,a.call_count')->select()->toArray();
         }else{
             return '导出失败';
         }
+        // $chunk_result = array_chunk($list, 1000);
+        // foreach($chunk_result as $val){
+        //     foreach ($val as $k=>$v) {
+        //         $find =  Db::table('sys_call_case_task')->field('id,name')->where('id',$v['task_id'])->find();
+        //         $val[$k]['task_id'] = $find['name'];
+        //         unset($val[$k]['id']);
+        //     }
+        //     unset($val);
+        // }
+        
         $list = $this->object_array($list);
-        foreach ($list as $k=>$v) {
-            $find =  Db::table('sys_call_case_task')->field('id,name')->where('id',$v['task_id'])->find();
-            $list[$k]['task_id'] = $find['name'];
-            unset($list[$k]['id']);
-        }
+        //echo count($list);die;
         $title = ['任务昵称','主叫号码','被叫号码','呼叫时长'];
         $this->exportToExcel(date('YmdHis',time()),$title,$list);
     }

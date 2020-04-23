@@ -466,24 +466,25 @@ class Channel extends ChannelBaseController
     //导入excel
     public function excel($file,$id){
         $res = leading_in($file);
-
-	    $data = [];
-        foreach($res as $k=>$v){
-            if(!empty($v['phone'])){
-               // $this->error('empty phone',url('channel/add_call_case_softphone'));
-                $data[$k]['extend_id'] = $v['extend_id'];
-                $data[$k]['case_message']= $v['case_message'];
-                $data[$k]['channel_id'] = session('channel_uid');
-                $data[$k]['add_time'] = date('Y-m-d H:i:s');
-                $data[$k]['task_id'] = $id;
-                $data[$k]['phone'] = $v['phone'];
+        $data = [];
+        $res_list = array_chunk($res, 10000);
+        foreach($res_list as $value){
+            foreach($value as $k=>$v){
+                if(!empty($v['phone'])){
+                // $this->error('empty phone',url('channel/add_call_case_softphone'));
+                    $data[$k]['extend_id'] = $v['extend_id'];
+                    $data[$k]['case_message']= $v['case_message'];
+                    $data[$k]['channel_id'] = session('channel_uid');
+                    $data[$k]['add_time'] = date('Y-m-d H:i:s');
+                    $data[$k]['task_id'] = $id;
+                    $data[$k]['phone'] = $v['phone'];
+                }
             }
+            $result = $this->CallCase->insertAll($data);
+            unset($value);
+            unset($data);
         }
-        $chunk_result = array_chunk($data, 1000);
-        foreach($chunk_result as $value){
-            $result = $this->CallCase->insertAll($value);
-        }
-        return count($data);
+        return count($res);
     }
     //添加呼叫表
     public function add_softphone($data,$id){
