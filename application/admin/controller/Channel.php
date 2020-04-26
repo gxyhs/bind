@@ -50,11 +50,16 @@ class Channel extends ChannelBaseController
             if(count($info)){
                 $length = $info['page_length'];
                 $start = $info['page_start'];
-                $list = $this->CallCase->field('id,task_id,phone,softphone,extend_id,recording_file,case_message,status,call_duration,call_count,add_time,call_time')->where('channel_id',session('channel_uid'))->limit($start,$length)->order('add_time desc')->where([['phone','like',"%".input('search')."%"]])->select();
+                $list = $this->CallCase->alias('a')
+                ->join('sys_call_case_task b','a.task_id = b.id','LEFT')
+                ->field('a.id,b.name as task_id,a.phone,a.softphone,a.extend_id,a.recording_file,a.case_message,a.status,a.call_duration,a.call_count,a.add_time,a.call_time')
+                ->where('a.channel_id',session('channel_uid'))
+                ->where([['a.phone','like',"%".input('search')."%"]])
+                ->limit($start,$length)
+                ->order('a.add_time desc')
+                ->select();
                 $list = $this->object_array($list);
                 foreach ($list as $k=>$v){
-                    $find =  Db::table('sys_call_case_task')->field('id,name')->where('id',$v['task_id'])->find();
-                    $list[$k]['task_id'] = $find['name'];
                     $list[$k]['status'] = $this->call_status[$v['status']];
                     $list[$k]['id'] = '<input type="checkbox" class="ids" id="'.$v['id'].'" task_id="'.$v['task_id'].'">';
                     $call_param = $v['id'].','.$v['task_id'];
@@ -71,9 +76,9 @@ class Channel extends ChannelBaseController
                             //"https://cs-recording.oss-ap-southeast-5.aliyuncs.com/20200116/01af22f5-51a5-45ae-a5c2-6a6ddd5ef378.wav";
                         }
                     }
-                    unset($v['call_time']);
+                    unset($list[$k]['call_time']);
                 }
-                $count = $this->CallCase->where('channel_id',session('channel_uid'))->where([['extend_id','like',"%".input('search')."%"]])->order('add_time desc')->count();
+                $count = $this->CallCase->where('channel_id',session('channel_uid'))->where([['extend_id','like',"%".input('search')."%"]])->count();
                 $data =  $this->show_paging_info($info['page_echo'],$count,$list);
                 return $data;
             }

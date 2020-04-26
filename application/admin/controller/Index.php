@@ -24,14 +24,13 @@ class Index extends AdminBaseController
             if(count($info)){
                 $length = $info['page_length'];
                 $start = $info['page_start'];
-                $list = $this->CallCase->field('id,task_id,phone,extend_id,case_message,add_time')->where([['extend_id','like',"%".input('search')."%"]])->limit($start,$length)->select();
-                
+                $list = $this->CallCase->alias('a')->join('sys_call_case_task b','a.task_id = b.id','LEFT')->field('a.id,b.name as task_id,a.phone,a.extend_id,a.case_message,a.add_time')->where([['a.extend_id','like',"%".input('search')."%"]])->limit($start,$length)->select();
+                //print_r($this->CallCase->getLastSql());die;
                 $list = $this->object_array($list);
                 foreach ($list as $k=>$v){
-                    $find =  Db::table('sys_call_case_task')->field('id,name')->where('id',$v['task_id'])->find();
-                    $list[$k]['task_id'] = $find['name'];
                     $list[$k]['id'] = '<input type="checkbox" class="ids" id="'.$v['id'].'">';
                     $list[$k][] = $this->bt_onclick('call_del',$v['id'],lang('delete'));
+                    unset($v);
                 }
                 $count = $this->CallCase->where([['extend_id','like',"%".input('search')."%"]])->count();
                 $data =  $this->show_paging_info($info['page_echo'],$count,$list);
@@ -194,7 +193,9 @@ class Index extends AdminBaseController
         }
     }
     public function downTask()
-    {
+    {   
+        ini_set('memory_limit','10240M');
+        set_time_limit(0);//设置超时限制为0分钟
         $id = input('get.id');
         if(empty($id)){
             return 'No user selected';
@@ -202,11 +203,19 @@ class Index extends AdminBaseController
         $beginTime = input('get.beginTime');
         $endTime = input('get.endTime');
         if(empty($beginTime) && empty($endTime)){
-            $list = $this->CallCase->alias('a')->join('sys_call_case_task b','a.task_id=b.id')->where(['a.channel_id'=>$id])->field('b.name,a.phone,a.softphone,a.call_count')->select()->toArray();
+            $count = $this->CallCase->where(['channel_id'=>$id])->count();
+            if($count > 200000){
+                $this->error('数据过大，请分段导出！',url('Index/index'));
+            }
+            $list = $this->CallCase->alias('a')->join('sys_call_case_task b','a.task_id=b.id','LEFT')->where(['a.channel_id'=>$id])->field('b.name,a.phone,a.softphone,a.call_count')->select()->toArray();
         }elseif(!empty($beginTime) && !empty($endTime)){
             $beginTime = date('Y-m-d H:i:s',strtotime($beginTime));
             $endTime = date('Y-m-d H:i:s',strtotime($endTime));
-            $list = $this->CallCase->alias('a')->join('sys_call_case_task b','a.task_id=b.id')->where(['a.channel_id'=>$id])->where('a.add_time','between time',[$beginTime,$endTime])->field('b.name,a.phone,a.softphone,a.call_count')->select()->toArray();
+            $count = $this->CallCase->where(['channel_id'=>$id])->where('add_time','between time',[$beginTime,$endTime])->count();
+            if($count > 210000){
+                $this->error('数据过大，请再次分段导出！',url('Index/index'));
+            }
+            $list = $this->CallCase->alias('a')->join('sys_call_case_task b','a.task_id=b.id','LEFT')->where(['a.channel_id'=>$id])->where('a.add_time','between time',[$beginTime,$endTime])->field('b.name,a.phone,a.softphone,a.call_count')->select()->toArray();
         }else{
             return '导出失败';
         }
